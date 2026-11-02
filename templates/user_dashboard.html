@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Rental Dashboard - FRICA{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+
+    <!-- Header & Welcome -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <span class="badge bg-primary bg-opacity-10 text-primary fw-semibold px-3 py-1 rounded-pill mb-2">
+                Customer Portal
+            </span>
+            <h1 class="h3 fw-bold mb-1">My Rentals & Dashboard</h1>
+            <p class="text-muted mb-0">Track live orders, approval statuses, and download official receipts</p>
+        </div>
+        <div>
+            <a href="{% url 'home' %}" class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i> Rent More Gadgets
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Stats Row -->
+    <div class="row g-3 mb-5">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold">Total Orders</span>
+                        <h3 class="fw-bold text-dark mt-1 mb-0">{{ rentals|length }}</h3>
+                    </div>
+                    <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3">
+                        <i class="bi bi-box-seam fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold">Waiting Approval</span>
+                        <h3 class="fw-bold text-warning mt-1 mb-0">{{ waiting_count }}</h3>
+                    </div>
+                    <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-3">
+                        <i class="bi bi-hourglass-split fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold">Active In-Hand</span>
+                        <h3 class="fw-bold text-success mt-1 mb-0">{{ active_count }}</h3>
+                    </div>
+                    <div class="p-3 bg-success bg-opacity-10 text-success rounded-3">
+                        <i class="bi bi-lightning-charge fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold">Returned</span>
+                        <h3 class="fw-bold text-info mt-1 mb-0">{{ returned_count }}</h3>
+                    </div>
+                    <div class="p-3 bg-info bg-opacity-10 text-info rounded-3">
+                        <i class="bi bi-check-all fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% comment %}KYC verification card inserted above rentals table{% endcomment %}
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-light">
+        <div class="card-body p-4">
+            <h5 class="card-title fw-bold mb-3">
+                <i class="bi bi-shield-lock me-2 text-primary"></i>Paperless Identity Verification (KYC)
+            </h5>
+            {% if request.user.customer_profile.kyc_status == 'VERIFIED' %}
+                <div class="alert alert-success d-flex align-items-center mb-0">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <div>Verified Customer – instant approval perks unlocked!</div>
+                </div>
+            {% else %}
+                <form method="post" action="{% url 'kyc_verification' %}" enctype="multipart/form-data" class="row g-3">
+                    {% csrf_token %}
+                    <div class="col-md-4">
+                        <label class="form-label">Document Type</label>
+                        <select name="id_proof_type" class="form-select" required>
+                            <option value="">Select…</option>
+                            <option value="AADHAAR">Aadhaar Card</option>
+                            <option value="PAN">PAN Card</option>
+                            <option value="DL">Driving License</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Document Number</label>
+                        <input type="text" name="id_number" class="form-control" placeholder="Enter ID number" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Front Image</label>
+                        <input type="file" name="id_front_image" class="form-control" accept="image/*" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Back Image</label>
+                        <input type="file" name="id_back_image" class="form-control" accept="image/*" required>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-upload me-1"></i> Submit for Verification
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    <!-- Rentals Table / Card List -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-white py-3 px-4 border-bottom">
+            <h5 class="fw-bold text-dark mb-0">Booking & Rental History</h5>
+        </div>
+
+        {% if rentals %}
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light text-muted small text-uppercase">
+                        <tr>
+                            <th class="ps-4 py-3">Rental ID & Item</th>
+                            <th class="py-3">Tenure Duration</th>
+                            <th class="py-3">Amount & Payment</th>
+                            <th class="py-3">Rental Status</th>
+                            <th class="pe-4 py-3 text-end">Receipt / Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rental in rentals %}
+                            <tr class="border-bottom">
+                                <!-- ID & Item -->
+                                <td class="ps-4 py-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-3 overflow-hidden bg-dark flex-shrink-0" style="width: 54px; height: 54px;">
+                                            {% if rental.product.image %}
+                                                <img src="{{ rental.product.image.url }}" alt="{{ rental.product.product_name }}" class="w-100 h-100 object-fit-cover">
+                                            {% else %}
+                                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white">
+                                                    <i class="bi bi-cpu"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-dark font-monospace mb-1">{{ rental.rental_id }}</span>
+                                            <a href="{% url 'product_detail' rental.product.pk %}" class="fw-bold text-dark text-decoration-none d-block hover-primary">
+                                                {{ rental.product.product_name }}
+                                            </a>
+                                            <small class="text-muted">{{ rental.product.category }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- Tenure -->
+                                <td class="py-3">
+                                    <div class="small fw-semibold text-dark">
+                                        {{ rental.rent_start_date|date:"d M, Y" }} &rarr; {{ rental.rent_end_date|date:"d M, Y" }}
+                                    </div>
+                                    <small class="text-muted d-block">
+                                        <i class="bi bi-calendar3 me-1"></i> {{ rental.total_days }} Day{{ rental.total_days|pluralize }}
+                                    </small>
+                                </td>
+
+                                <!-- Amount & Payment -->
+                                <td class="py-3">
+                                    <div class="fw-bold text-dark">₹{{ rental.total_amount|floatformat:2 }}</div>
+                                    <div class="small">
+                                        <span class="text-muted">{{ rental.payment_method }} &bull;</span>
+                                        {% if rental.payment_status == 'Paid' %}
+                                            <span class="text-success fw-semibold"><i class="bi bi-check-circle-fill"></i> Paid</span>
+                                        {% elif rental.payment_status == 'Pending' %}
+                                            <span class="text-warning fw-semibold"><i class="bi bi-hourglass"></i> Pending</span>
+                                        {% else %}
+                                            <span class="text-danger fw-semibold"><i class="bi bi-x-circle-fill"></i> Failed</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+
+                                <!-- Status Badge -->
+                                <td class="py-3">
+                                    {% if rental.rental_status == 'Waiting for Approval' %}
+                                        <span class="badge-status badge-waiting">
+                                            <i class="bi bi-clock-history"></i> Waiting for Approval
+                                        </span>
+                                    {% elif rental.rental_status == 'Active' %}
+                                        <span class="badge-status badge-active">
+                                            <i class="bi bi-check2-circle"></i> Active Rental
+                                        </span>
+                                    {% elif rental.rental_status == 'Returned' %}
+                                        <span class="badge-status badge-returned">
+                                            <i class="bi bi-arrow-return-left"></i> Returned
+                                        </span>
+                                    {% elif rental.rental_status == 'Cancelled' %}
+                                        <span class="badge-status badge-cancelled">
+                                            <i class="bi bi-x-octagon"></i> Cancelled
+                                        </span>
+                                    {% endif %}
+                                    <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">
+                                        Booked: {{ rental.created_at|date:"d M Y, h:i A" }}
+                                    </small>
+                                </td>
+
+                                <!-- Actions -->
+                                <td class="pe-4 py-3 text-end">
+                                    <div class="d-flex align-items-center justify-content-end gap-2">
+                                        <a href="{% url 'rental_receipt' rental.rental_id %}" class="btn btn-outline-primary btn-sm rounded-pill px-3" target="_blank" title="View / Print Tax Receipt">
+                                            <i class="bi bi-file-earmark-text me-1"></i> Receipt
+                                        </a>
+{% if rental.rental_status == 'Active' %}
+    <a href="{% url 'extend_rental' rental.rental_id %}" class="btn btn-outline-success btn-sm rounded-pill px-3" title="Request extension">
+        <i class="bi bi-arrow-repeat me-1"></i> Extend
+    </a>
+    <a href="{% url 'return_rental' rental.rental_id %}" class="btn btn-outline-warning btn-sm rounded-pill px-3" title="Request return">
+        <i class="bi bi-box-arrow-in-right me-1"></i> Return
+    </a>
+{% endif %}
+
+                                        {% if rental.rental_status == 'Waiting for Approval' %}
+                                            <a href="{% url 'cancel_rental' rental.rental_id %}" class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="return confirm('Are you sure you want to cancel this rental booking?');">
+                                                Cancel
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5 px-3">
+                <i class="bi bi-inbox text-muted display-4 mb-3 d-block"></i>
+                <h5 class="fw-bold text-dark">No Rentals Placed Yet</h5>
+                <p class="text-muted mb-4">When you rent gadgets on FRICA, your orders and approval tracking will appear here.</p>
+                <a href="{% url 'home' %}" class="btn btn-primary rounded-pill px-4">Browse Catalog</a>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

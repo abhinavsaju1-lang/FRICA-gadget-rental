@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout & Booking - FRICA{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+
+    <div class="mb-4">
+        <h1 class="h3 fw-bold mb-1">Confirm Rental & Checkout</h1>
+        <p class="text-muted mb-0">Provide delivery coordinates and select simulated payment mode</p>
+    </div>
+
+    <form method="POST" action="{% url 'checkout_view' %}">
+        {% csrf_token %}
+
+        <div class="row g-4">
+            <!-- Left Column: Shipping & Payment -->
+            <div class="col-lg-7">
+                <!-- Delivery Details Card -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-geo-alt-fill text-primary"></i> 1. Delivery Coordinates
+                    </h5>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Complete Delivery Address</label>
+                        {{ form.delivery_address }}
+                        {% if form.delivery_address.errors %}
+                            <div class="text-danger small mt-1">{{ form.delivery_address.errors.0 }}</div>
+                        {% endif %}
+                        <div class="form-text small">Our courier partner will deliver the gadgets to this address.</div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold small text-muted">Recipient Contact Number</label>
+                        {{ form.contact_phone }}
+                        {% if form.contact_phone.errors %}
+                            <div class="text-danger small mt-1">{{ form.contact_phone.errors.0 }}</div>
+                        {% endif %}
+                        <div class="form-text small">For delivery scheduling and OTP verification.</div>
+                    </div>
+                </div>
+
+                <!-- Payment Selection Card -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-credit-card-2-front-fill text-primary"></i> 2. Select Payment Method
+                    </h5>
+
+                    <div class="d-flex flex-column gap-3">
+                        <!-- UPI Option -->
+                        <label class="payment-option-card border rounded-3 p-3 d-flex align-items-center gap-3 cursor-pointer border-primary bg-light">
+                            <input class="form-check-input mt-0" type="radio" name="payment_method" value="UPI" checked>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold text-dark d-flex align-items-center justify-content-between">
+                                    <span>UPI Instant Payment</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success">Recommended</span>
+                                </div>
+                                <small class="text-muted d-block">Pay via GPay, PhonePe, Paytm, or BHIM UPI.</small>
+                            </div>
+                            <i class="bi bi-qr-code text-primary fs-3"></i>
+                        </label>
+
+                        <!-- Card Option -->
+                        <label class="payment-option-card border rounded-3 p-3 d-flex align-items-center gap-3 cursor-pointer">
+                            <input class="form-check-input mt-0" type="radio" name="payment_method" value="Card">
+                            <div class="flex-grow-1">
+                                <div class="fw-bold text-dark">Credit / Debit Card</div>
+                                <small class="text-muted d-block">Visa, MasterCard, RuPay cards supported.</small>
+                            </div>
+                            <i class="bi bi-credit-card text-muted fs-3"></i>
+                        </label>
+
+                        <!-- COD Option -->
+                        <label class="payment-option-card border rounded-3 p-3 d-flex align-items-center gap-3 cursor-pointer">
+                            <input class="form-check-input mt-0" type="radio" name="payment_method" value="Cash on Delivery">
+                            <div class="flex-grow-1">
+                                <div class="fw-bold text-dark">Cash / UPI on Delivery</div>
+                                <small class="text-muted d-block">Pay directly to our delivery executive when your device arrives.</small>
+                            </div>
+                            <i class="bi bi-cash-coin text-muted fs-3"></i>
+                        </label>
+                    </div>
+
+                    {% if form.payment_method.errors %}
+                        <div class="text-danger small mt-2">{{ form.payment_method.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="alert alert-info border-0 rounded-3 small d-flex align-items-center gap-2">
+                    <i class="bi bi-info-circle-fill fs-5"></i>
+                    <div>
+                        <strong>Academic / Portfolio Simulation:</strong> Payment processing is simulated for demonstration purposes. Orders will immediately generate a real <code>RentedItems</code> record with a unique tracking ID and "Waiting for Approval" status.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Order Review -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 100px;">
+                    <h5 class="fw-bold text-dark mb-3">Order Review</h5>
+
+                    <!-- Item list -->
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        {% for item in cart_items %}
+                            <div class="d-flex align-items-center justify-content-between pb-3 border-bottom">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-3 bg-dark overflow-hidden flex-shrink-0" style="width: 48px; height: 48px;">
+                                        {% if item.product.image %}
+                                            <img src="{{ item.product.image.url }}" alt="{{ item.product.product_name }}" class="w-100 h-100 object-fit-cover">
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold text-dark small">{{ item.product.product_name|truncatechars:26 }}</h6>
+                                        <small class="text-muted">{{ item.total_days }} day{{ item.total_days|pluralize }} ({{ item.rent_start_date|date:"d M" }} - {{ item.rent_end_date|date:"d M" }})</small>
+                                    </div>
+                                </div>
+                                <div class="fw-bold text-dark small">₹{{ item.total_amount|floatformat:2 }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Subtotal:</span>
+                        <span class="fw-semibold text-dark">₹{{ grand_total|floatformat:2 }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Delivery & Handling:</span>
+                        <span class="text-success fw-bold">FREE</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Security Deposit:</span>
+                        <span class="text-success fw-bold">₹0.00</span>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="fw-bold text-dark fs-5">Total Payable:</span>
+                        <span class="fs-4 fw-extrabold text-primary">₹{{ grand_total|floatformat:2 }}</span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 fw-bold py-3 shadow-sm mb-3">
+                        <i class="bi bi-check2-circle me-1"></i> Place Rental Order
+                    </button>
+
+                    <div class="d-flex align-items-center justify-content-center gap-2 text-muted small">
+                        <i class="bi bi-shield-check text-success"></i> Free cancellation before dispatch
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+{% endblock %}

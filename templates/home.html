@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - FRICA{% endblock %}
+
+{% block content %}
+<!-- Header Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'home' %}">Electronic Gadget Rental Site - FRICA</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url 'user_dashboard' %}"><i class="bi bi-person-circle"></i></a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'cart_view' %}"><i class="bi bi-cart"></i></a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Category Nav -->
+<div class="bg-light py-2">
+  <div class="container d-flex justify-content-center">
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">All</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'category' 'Mobiles' %}">Mobiles</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'category' 'Computers' %}">Computers</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'category' 'Camera' %}">Camera</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'category' 'Laptop' %}">Laptop</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'category' 'TV' %}">TV</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Hero Banner -->
+<div class="bg-primary text-white text-center py-5 mb-4" style="background-image:url('{% static 'images/hero.jpg' %}'); background-size:cover;">
+  <h1 class="display-4">Big Offers</h1>
+  <p class="lead">Rent the latest gadgets at unbeatable daily rates.</p>
+  <a href="{% url 'home' %}" class="btn btn-light me-2">Rent Now</a>
+  <a href="#contact" class="btn btn-outline-light">Contact Us</a>
+</div>
+
+<!-- Rental Items Grid -->
+<div class="container">
+  <h2 class="mb-4 text-center">RENTAL ITEMS</h2>
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for product in products %}
+    <div class="col">
+      <div class="card h-100">
+        {% if 'http' in product.image|stringformat:"s" %}
+          <img src="{{ product.image }}" class="card-img-top p-3" alt="{{ product.product_name }}" style="height: 220px; object-fit: contain;">
+        {% elif product.image %}
+          <img src="{{ product.image.url }}" class="card-img-top p-3" alt="{{ product.product_name }}" style="height: 220px; object-fit: contain;">
+        {% elif product.image_url %}
+          <img src="{{ product.image_url }}" class="card-img-top p-3" alt="{{ product.product_name }}" style="height: 220px; object-fit: contain;">
+        {% elif product.get_image_url %}
+          <img src="{{ product.get_image_url }}" class="card-img-top p-3" alt="{{ product.product_name }}" style="height: 220px; object-fit: contain;">
+        {% else %}
+          <img src="https://placehold.co/400x300?text={{ product.product_name|urlencode }}" class="card-img-top p-3" alt="{{ product.product_name }}" style="height: 220px; object-fit: contain;">
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ product.product_name }}</h5>
+          <p class="card-text text-muted">{{ product.category }}</p>
+          <span class="badge bg-success mb-2">₹{{ product.rent_price }}/DAY</span>
+          <a href="{% url 'product_detail' product.id %}" class="btn btn-primary mt-auto">Rent Now</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-center">No products available.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

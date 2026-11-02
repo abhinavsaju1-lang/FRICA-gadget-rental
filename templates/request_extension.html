@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Extend Rental - FRICA{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h3 class="mb-4">Extend Rental Period</h3>
+  <div class="row g-4 mb-4">
+    <div class="col-md-3">
+      {% if rental.product.image %}
+        <img src="{{ rental.product.image.url }}" alt="{{ rental.product.product_name }}" class="img-fluid rounded-3">
+      {% else %}
+        <div class="bg-light d-flex align-items-center justify-content-center" style="height:150px;">
+          <i class="bi bi-image" style="font-size:3rem;color:#aaa;"></i>
+        </div>
+      {% endif %}
+    </div>
+    <div class="col-md-9">
+      <h5 class="fw-bold">{{ rental.product.product_name }}</h5>
+      <p class="mb-1"><strong>Current Tenure:</strong> {{ rental.rent_start_date|date:"d M, Y" }} &rarr; {{ rental.rent_end_date|date:"d M, Y" }}</p>
+      <p class="mb-1"><strong>Daily Rent Price:</strong> ₹{{ rental.product.rent_price|floatformat:2 }}</p>
+    </div>
+  </div>
+
+  <form method="post" class="row g-3" id="extensionForm">
+    {% csrf_token %}
+    <div class="col-md-4">
+      <label class="form-label">Additional Days</label>
+      <select name="extra_days" class="form-select" id="extraDaysSelect" required>
+        <option value="" selected disabled>Select days</option>
+        <option value="1">1 day</option>
+        <option value="3">3 days</option>
+        <option value="5">5 days</option>
+        <option value="7">7 days</option>
+        <option value="14">14 days</option>
+      </select>
+    </div>
+    <div class="col-md-4 d-flex align-items-end">
+      <div class="w-100">
+        <p class="mb-0"><strong>Additional Amount:</strong> <span id="extraAmount">₹0.00</span></p>
+      </div>
+    </div>
+    <div class="col-12 mt-3">
+      <button type="submit" class="btn btn-success me-2">Confirm Extension &amp; Pay</button>
+      <a href="{% url 'user_dashboard' %}" class="btn btn-secondary">Cancel / Back to Dashboard</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  const dailyPrice = parseFloat("{{ rental.product.rent_price|floatformat:2 }}");
+  const extraDaysSelect = document.getElementById('extraDaysSelect');
+  const extraAmountSpan = document.getElementById('extraAmount');
+  if (extraDaysSelect) {
+    extraDaysSelect.addEventListener('change', function() {
+      const days = parseInt(this.value) || 0;
+      const amount = (days * dailyPrice).toFixed(2);
+      extraAmountSpan.textContent = `₹${amount}`;
+    });
+  }
+</script>
+{% endblock %}

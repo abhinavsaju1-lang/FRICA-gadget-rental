@@ -50,19 +50,24 @@ User.customer = property(lambda u: getattr(u, 'customer_profile', None))
 class Products(models.Model):
     CATEGORY_CHOICES = [
         ('Mobiles', 'Mobiles'),
-        ('Computers', 'Computers'),
-        ('Camera', 'Camera'),
-        ('Laptop', 'Laptop'),
-        ('TV', 'TV'),
-        ('Watches', 'Watches'),
+        ('Laptop', 'Laptops'),
+        ('TV', 'Smart TVs'),
+        ('Camera', 'Cameras'),
+        ('Audio', 'Audio & Home Theatres'),
+        ('Watches', 'Watches & Smartwatches'),
+        ('Computers', 'Gaming Rigs & Computers'),
     ]
 
     product_name = models.CharField(max_length=200)
+    brand = models.CharField(max_length=100, blank=True, null=True)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     description = models.TextField()
     # Rich specs stored as newline-separated key:value pairs e.g. "Processor:A17 Pro\nRAM:8GB"
     specs = models.TextField(blank=True, null=True, help_text="Key specs, one per line e.g. Processor:Snapdragon 8 Gen 2")
     rent_price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Rent price per day in INR")
+    deposit_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), help_text="Refundable security deposit")
+    rating = models.DecimalField(max_digits=3, decimal_places=1, default=Decimal('4.8'))
+    reviews_count = models.PositiveIntegerField(default=48)
     availability = models.BooleanField(default=True)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
     # CDN fallback URL for high-resolution product imagery (e.g. Unsplash)
@@ -73,6 +78,31 @@ class Products(models.Model):
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
         ordering = ['-created_at']
+
+    @property
+    def name(self):
+        return self.product_name
+
+    @property
+    def day_price(self):
+        return self.rent_price
+
+    @property
+    def features_summary(self):
+        if self.description:
+            return self.description[:140] + ('...' if len(self.description) > 140 else '')
+        return ""
+
+    @property
+    def estimated_market_value(self):
+        """
+        Calculates realistic retail market purchase price for Rent-to-Own calculator.
+        Roughly 75x daily rent price, rounded to nearest 500.
+        """
+        if self.rent_price:
+            base = float(self.rent_price) * 75
+            return max(15000, int(round(base / 500.0) * 500))
+        return 50000
 
     @property
     def get_image_url(self):
@@ -201,3 +231,23 @@ class RentedItems(models.Model):
 
     def __str__(self):
         return f"{self.rental_id} | {self.product.product_name} | {self.user.username} ({self.rental_status})"
+
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlist_items')
+    gadget = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='in_wishlists')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Wishlist Item'
+        verbose_name_plural = 'Wishlist Items'
+        unique_together = ('user', 'gadget')
+        ordering = ['-created_at']
+
+    @property
+    def product(self):
+        """Alias for compatibility with product references."""
+        return self.gadget
+
+    def __str__(self):
+        return f"{self.user.username} - {self.gadget.product_name}"

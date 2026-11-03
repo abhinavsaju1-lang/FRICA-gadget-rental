@@ -204,6 +204,11 @@
                             class="btn btn-rent btn-lg w-100 fw-bold py-3 shadow-sm">
                         <i class="bi bi-bag-plus-fill me-2"></i> Add to Rental Cart
                     </button>
+
+                    <button type="button" class="btn btn-outline-danger w-100 py-2 mt-2 rounded-3 fw-bold wishlist-toggle-btn d-flex align-items-center justify-content-center gap-2" data-product-id="{{ product.id }}">
+                        <i class="bi {% if product.id in user_wishlist_ids %}bi-heart-fill text-danger{% else %}bi-heart{% endif %} fs-5"></i>
+                        <span>{% if product.id in user_wishlist_ids %}Saved in Wishlist{% else %}Add to Wishlist{% endif %}</span>
+                    </button>
                 </form>
                 {% else %}
                 <div class="alert alert-warning rounded-3">
@@ -214,6 +219,74 @@
                     Currently Unavailable
                 </button>
                 {% endif %}
+
+                <!-- ================= SMART RENT-TO-OWN (TRY BEFORE YOU BUY) CALCULATOR ================= -->
+                <div class="card border-0 shadow-sm rounded-4 mt-4 overflow-hidden" style="background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); border: 1px solid #bfdbfe !important;">
+                    <div class="card-header border-0 bg-transparent pt-3 px-3 pb-0 d-flex align-items-center justify-content-between">
+                        <span class="badge bg-primary text-white fw-bold px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
+                            <i class="bi bi-lightbulb-fill text-warning me-1"></i> TRY BEFORE YOU BUY
+                        </span>
+                        <span class="badge bg-success bg-opacity-10 text-success fw-bold" style="font-size: 0.72rem;">
+                            70% Equity Credit
+                        </span>
+                    </div>
+
+                    <div class="card-body p-3">
+                        <h6 class="fw-bold text-dark mb-1 d-flex align-items-center gap-1">
+                            Want to keep it forever? Try Rent-to-Own
+                        </h6>
+                        <p class="text-muted small mb-3 lh-sm" style="font-size: 0.78rem;">
+                            Test this gadget risk-free. <strong>70% of every rupee</strong> you pay in rent is credited toward final purchase and full ownership.
+                        </p>
+
+                        <!-- Market Value & Equity Credit Breakdown -->
+                        <div class="p-2 px-3 bg-white rounded-3 border mb-3 shadow-xs">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-muted small">Full Retail Market Value:</span>
+                                <strong class="text-dark fs-6" id="rtoMarketValue">₹{{ product.estimated_market_value|floatformat:0 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-muted small">Projected Rent (<span id="rtoDaysLabel">30</span> Days):</span>
+                                <span class="fw-semibold text-primary" id="rtoRentPaid">₹0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center text-success mb-2">
+                                <span class="small fw-bold"><i class="bi bi-shield-check me-1"></i>70% Equity Credited:</span>
+                                <strong class="fw-bold" id="rtoEquityCredit">-₹0</strong>
+                            </div>
+                            <hr class="my-1 border-secondary border-opacity-25">
+                            <div class="d-flex justify-content-between align-items-center pt-1">
+                                <span class="fw-bold text-dark small">Balance Buyout Price:</span>
+                                <span class="fs-5 fw-extrabold text-danger" id="rtoBuyoutPrice">₹0</span>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Days Slider -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="rtoSlider" class="form-label mb-0 small fw-bold text-dark">
+                                    <i class="bi bi-sliders me-1 text-primary"></i> Simulated Rental Tenure:
+                                </label>
+                                <span class="badge bg-primary text-white fw-bold" id="rtoSliderBadge">30 Days</span>
+                            </div>
+                            <input type="range" class="form-range" min="1" max="90" value="30" id="rtoSlider"
+                                   data-rent-price="{{ product.rent_price }}"
+                                   data-market-value="{{ product.estimated_market_value }}">
+                            <div class="d-flex justify-content-between text-muted" style="font-size: 0.68rem;">
+                                <span>1 Day</span>
+                                <span>15 Days</span>
+                                <span>30 Days</span>
+                                <span>60 Days</span>
+                                <span>90 Days (Max Credit)</span>
+                            </div>
+                        </div>
+
+                        <!-- Apply Simulation Button -->
+                        <button type="button" class="btn btn-primary w-100 fw-bold py-2 rounded-3 shadow-xs d-flex align-items-center justify-content-center gap-2" id="btnApplyBuyoutModal" data-bs-toggle="modal" data-bs-target="#buyoutInquiryModal">
+                            <i class="bi bi-cart-check-fill"></i>
+                            <span>Apply for Buyout Option</span>
+                        </button>
+                    </div>
+                </div>
 
             </div><!-- /sticky-top -->
         </div>
@@ -263,5 +336,115 @@
     </section>
     {% endif %}
 
+    <!-- ================= RENT-TO-OWN BUYOUT INQUIRY MODAL ================= -->
+    <div class="modal fade" id="buyoutInquiryModal" tabindex="-1" aria-labelledby="buyoutInquiryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header text-white p-3 px-4" style="background: linear-gradient(135deg, #0b192c 0%, #1e3a8a 100%);">
+                    <div>
+                        <div class="badge bg-warning text-dark fw-bold px-2 py-1 rounded-pill mb-1 small">TRY BEFORE YOU BUY</div>
+                        <h5 class="modal-title fw-bold text-white mb-0" id="buyoutInquiryModalLabel">
+                            <i class="bi bi-shield-check text-warning me-1"></i> Rent-to-Own Buyout Guarantee
+                        </h5>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div class="card border-0 rounded-3 shadow-xs p-3 bg-white mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            {% if product.get_image_url %}
+                                <img src="{{ product.get_image_url }}" alt="{{ product.product_name }}" style="width: 70px; height: 70px; object-fit: contain;">
+                            {% endif %}
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1">{{ product.product_name }}</h6>
+                                <div class="text-muted small">Daily Rent: ₹{{ product.rent_price|floatformat:0 }}/day</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-3 border mb-3">
+                        <h6 class="fw-bold text-dark mb-2 small text-uppercase text-muted">Summary of Buyout Terms</h6>
+                        <ul class="list-unstyled small mb-0 d-flex flex-column gap-2 text-dark">
+                            <li class="d-flex align-items-center justify-content-between">
+                                <span class="text-muted">Estimated Retail Market Value:</span>
+                                <strong>₹{{ product.estimated_market_value|floatformat:0 }}</strong>
+                            </li>
+                            <li class="d-flex align-items-center justify-content-between">
+                                <span class="text-muted">Simulated Rental Days:</span>
+                                <strong id="modalSummaryDays">30 Days</strong>
+                            </li>
+                            <li class="d-flex align-items-center justify-content-between text-success">
+                                <span class="fw-bold">70% Equity Credited to You:</span>
+                                <strong id="modalSummaryCredit">-₹0</strong>
+                            </li>
+                            <li class="d-flex align-items-center justify-content-between pt-2 border-top">
+                                <span class="fw-bold text-danger">Final Buyout Settlement Price:</span>
+                                <strong class="fs-5 text-danger" id="modalSummaryBuyout">₹0</strong>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-info py-2 small mb-0 d-flex align-items-center gap-2">
+                        <i class="bi bi-info-circle-fill fs-5"></i>
+                        <div>
+                            Ready to keep this device? Start renting now, and anytime during your rental, click "Buyout" on your dashboard to convert it to full ownership!
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-white border-top py-2 px-4 justify-content-between">
+                    <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">Close</button>
+                    <a href="{% url 'add_to_cart' product.pk %}" class="btn btn-warning fw-bold rounded-pill px-4 btn-sm shadow-xs text-dark">
+                        <i class="bi bi-bag-check-fill me-1"></i> Start Rental with Buyout Option
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const slider = document.getElementById('rtoSlider');
+        if (!slider) return;
+
+        const rentPrice = parseFloat(slider.dataset.rentPrice || '0');
+        const marketValue = parseFloat(slider.dataset.marketValue || '0');
+
+        function updateRTOCalculator(days) {
+            const rentPaid = rentPrice * days;
+            const equityCredit = Math.round(rentPaid * 0.70);
+            const buyoutPrice = Math.max(0, Math.round(marketValue - equityCredit));
+
+            const daysLabel = document.getElementById('rtoDaysLabel');
+            const sliderBadge = document.getElementById('rtoSliderBadge');
+            const rentPaidEl = document.getElementById('rtoRentPaid');
+            const equityCreditEl = document.getElementById('rtoEquityCredit');
+            const buyoutPriceEl = document.getElementById('rtoBuyoutPrice');
+
+            if (daysLabel) daysLabel.textContent = days;
+            if (sliderBadge) sliderBadge.textContent = `${days} Day${days > 1 ? 's' : ''}`;
+            if (rentPaidEl) rentPaidEl.textContent = `₹${rentPaid.toLocaleString('en-IN')}`;
+            if (equityCreditEl) equityCreditEl.textContent = `-₹${equityCredit.toLocaleString('en-IN')}`;
+            if (buyoutPriceEl) buyoutPriceEl.textContent = `₹${buyoutPrice.toLocaleString('en-IN')}`;
+
+            // Update modal values
+            const mDays = document.getElementById('modalSummaryDays');
+            const mCredit = document.getElementById('modalSummaryCredit');
+            const mBuyout = document.getElementById('modalSummaryBuyout');
+            if (mDays) mDays.textContent = `${days} Days`;
+            if (mCredit) mCredit.textContent = `-₹${equityCredit.toLocaleString('en-IN')}`;
+            if (mBuyout) mBuyout.textContent = `₹${buyoutPrice.toLocaleString('en-IN')}`;
+        }
+
+        slider.addEventListener('input', (e) => {
+            updateRTOCalculator(parseInt(e.target.value, 10));
+        });
+
+        // Initialize with default 30 days
+        updateRTOCalculator(30);
+    });
+</script>
+{% endblock %}
 {% endblock %}

@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Wishlist ({{ total_items }} Saved Items) - FRICA Gadget Rental{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3 small">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'user_dashboard' %}" class="text-decoration-none">Account</a></li>
+            <li class="breadcrumb-item active" aria-current="page">My Wishlist</li>
+        </ol>
+    </nav>
+
+    <!-- Wishlist Header Banner -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white p-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-danger bg-opacity-10 text-danger d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; font-size: 1.6rem;">
+                    <i class="bi bi-heart-fill"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold text-dark mb-0">My Saved Gadgets</h4>
+                    <p class="text-muted small mb-0">
+                        {{ total_items }} item{{ total_items|pluralize }} saved in your personal rental wishlist
+                    </p>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="{% url 'home' %}" class="btn btn-outline-primary rounded-pill px-4 fw-semibold btn-sm">
+                    <i class="bi bi-plus-circle me-1"></i> Explore More Gadgets
+                </a>
+                <a href="{% url 'cart_view' %}" class="btn btn-warning rounded-pill px-4 fw-bold btn-sm shadow-xs">
+                    <i class="bi bi-cart3 me-1"></i> View Rental Cart ({{ cart_count }})
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Content -->
+    {% if wishlist_items %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+        {% for item in wishlist_items %}
+        {% with product=item.gadget %}
+        <div class="col" id="wishlist-item-col-{{ product.id }}">
+            <div class="fk-card h-100 position-relative">
+                <!-- Thumbnail Wrap -->
+                <div class="fk-card-img-wrap position-relative">
+                    <!-- Category Badge -->
+                    <span class="fk-badge-discount">
+                        {{ product.category }}
+                    </span>
+
+                    <!-- Quick Remove from Wishlist Button -->
+                    <a href="{% url 'remove_from_wishlist' product.id %}"
+                       class="btn btn-light btn-sm rounded-circle shadow-sm position-absolute top-0 end-0 m-2 text-danger"
+                       title="Remove from wishlist"
+                       style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; z-index: 5;"
+                       onclick="return confirm('Remove {{ product.product_name|escapejs }} from your wishlist?');">
+                        <i class="bi bi-trash3-fill fs-6"></i>
+                    </a>
+
+                    <!-- Gadget Image -->
+                    {% if 'http' in product.image|stringformat:"s" %}
+                        <img src="{{ product.image }}" class="fk-card-img" alt="{{ product.product_name }}" loading="lazy">
+                    {% elif product.image %}
+                        <img src="{{ product.image.url }}" class="fk-card-img" alt="{{ product.product_name }}" loading="lazy">
+                    {% elif product.get_image_url %}
+                        <img src="{{ product.get_image_url }}" class="fk-card-img" alt="{{ product.product_name }}" loading="lazy">
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="bi bi-laptop fs-1"></i>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Card Details Body -->
+                <div class="p-3 d-flex flex-column flex-grow-1">
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="text-muted small fw-bold text-uppercase tracking-wider">
+                            {{ product.brand|default:product.category }}
+                        </span>
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="fk-rating-badge">
+                                {{ product.rating|default:"4.8" }} <i class="bi bi-star-fill" style="font-size: 0.65rem;"></i>
+                            </span>
+                            <span class="text-muted small">({{ product.reviews_count|default:"45" }})</span>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold text-dark mb-2 text-truncate" title="{{ product.product_name }}">
+                        <a href="{% url 'product_detail' product.id %}" class="text-dark text-decoration-none hover-primary">
+                            {{ product.product_name }}
+                        </a>
+                    </h6>
+
+                    <!-- Tech Specs Preview -->
+                    <div class="mb-3 d-flex flex-wrap gap-1">
+                        {% for chip in product.specs_preview %}
+                            <span class="badge bg-light text-dark border small font-monospace py-1" style="font-size: 0.7rem;">
+                                {{ chip.key }}: {{ chip.value }}
+                            </span>
+                        {% empty %}
+                            <span class="badge bg-light text-muted border small py-1" style="font-size: 0.7rem;">
+                                Premium Certified
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Pricing & Actions Row -->
+                    <div class="mt-auto pt-3 border-top">
+                        <div class="d-flex align-items-baseline gap-2 mb-2">
+                            <span class="fs-4 fw-extrabold text-dark">₹{{ product.rent_price|floatformat:0 }}</span>
+                            <span class="text-muted small">/ Day</span>
+                            <span class="badge bg-success bg-opacity-10 text-success fw-bold ms-auto" style="font-size: 0.72rem;">
+                                <i class="bi bi-shield-check me-1"></i>Zero Deposit
+                            </span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <!-- Move to Cart Button -->
+                            <a href="{% url 'move_to_cart_from_wishlist' product.id %}" class="btn btn-warning fw-bold text-dark shadow-sm">
+                                <i class="bi bi-cart-plus-fill me-1"></i> Move to Cart &amp; Rent
+                            </a>
+
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-secondary btn-sm w-100 fw-semibold">
+                                    <i class="bi bi-eye me-1"></i> View Details
+                                </a>
+                                <a href="{% url 'remove_from_wishlist' product.id %}" class="btn btn-outline-danger btn-sm px-3" title="Remove" onclick="return confirm('Remove {{ product.product_name|escapejs }} from your wishlist?');">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="text-muted text-center small mt-2" style="font-size: 0.7rem;">
+                            Added {{ item.created_at|timesince }} ago
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Empty Wishlist State -->
+    <div class="card border-0 shadow-sm rounded-4 text-center py-5 my-4 bg-white">
+        <div class="py-5 px-3">
+            <div class="rounded-circle bg-danger bg-opacity-10 text-danger d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; font-size: 2.5rem;">
+                <i class="bi bi-heart"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-2">Your Wishlist is Empty</h4>
+            <p class="text-muted mb-4 mx-auto" style="max-width: 480px;">
+                Explore India's largest rental catalog of flagship smartphones, 8K OLED TVs, cinema cameras, and gaming rigs. Click the heart icon on any gadget to save it here for later.
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'home' %}" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">
+                    <i class="bi bi-rocket-takeoff-fill me-1"></i> Explore Gadgets Catalog
+                </a>
+                <a href="{% url 'category' 'Mobiles' %}" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold">
+                    <i class="bi bi-phone me-1"></i> Flagship Mobiles
+                </a>
+                <a href="{% url 'category' 'Camera' %}" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold">
+                    <i class="bi bi-camera-fill me-1"></i> Cameras &amp; Cine Gear
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Rental Assurance Banner -->
+    <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
+        <div class="row g-3 text-center text-md-start">
+            <div class="col-md-4 d-flex align-items-center gap-3">
+                <div class="rounded-circle p-2 bg-success bg-opacity-10 text-success fs-3">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">Price Lock Guarantee</h6>
+                    <small class="text-muted">Wishlist items keep daily rental rates locked</small>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-center gap-3">
+                <div class="rounded-circle p-2 bg-primary bg-opacity-10 text-primary fs-3">
+                    <i class="bi bi-truck"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">Doorstep Delivery</h6>
+                    <small class="text-muted">Same-day dispatch to your selected city</small>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-center gap-3">
+                <div class="rounded-circle p-2 bg-warning bg-opacity-10 text-warning fs-3">
+                    <i class="bi bi-award-fill"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">FRICA Care Insured</h6>
+                    <small class="text-muted">100% sanitized &amp; certified electronics</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

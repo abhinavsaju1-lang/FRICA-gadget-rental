@@ -1,76 +1,760 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Home - FRICA{% endblock %}
+{% block title %}FRICA - India's #1 Electronic Gadget Rental Store (Flipkart/Amazon Deals){% endblock %}
 
 {% block content %}
-<!-- Header Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'home' %}">Electronic Gadget Rental Site - FRICA</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="{% url 'user_dashboard' %}"><i class="bi bi-person-circle"></i></a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'cart_view' %}"><i class="bi bi-cart"></i></a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
+<div class="container-fluid px-lg-4 py-2">
 
-<!-- Category Nav -->
-<div class="bg-light py-2">
-  <div class="container d-flex justify-content-center">
-    <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">All</a></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'category' 'Mobiles' %}">Mobiles</a></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'category' 'Computers' %}">Computers</a></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'category' 'Camera' %}">Camera</a></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'category' 'Laptop' %}">Laptop</a></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'category' 'TV' %}">TV</a></li>
-    </ul>
-  </div>
-</div>
+    <!-- ================= 0. INTERACTIVE ANIMATED LANDING HERO ================= -->
+    <div class="flica-hero-mesh p-4 p-md-5 mb-4 position-relative">
+        <div class="hero-glow-blob-1"></div>
+        <div class="hero-glow-blob-2"></div>
 
-<!-- Hero Banner -->
-<div class="bg-primary text-white text-center py-5 mb-4" style="background-image:url('{% static 'images/hero.jpg' %}'); background-size:cover;">
-  <h1 class="display-4">Big Offers</h1>
-  <p class="lead">Rent the latest gadgets at unbeatable daily rates.</p>
-  <a href="{% url 'home' %}" class="btn btn-light me-2">Rent Now</a>
-  <a href="#contact" class="btn btn-outline-light">Contact Us</a>
-</div>
+        <div class="row align-items-center g-4 position-relative z-2">
+            <!-- Left Hero Content -->
+            <div class="col-lg-7 text-white">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-white bg-opacity-10 border border-white border-opacity-20 mb-3 shadow-sm">
+                    <span class="badge bg-warning text-dark fw-bold rounded-pill px-2 py-1" style="font-size: 0.72rem;">NEW GEN</span>
+                    <span class="small fw-semibold text-warning"><i class="bi bi-stars me-1"></i>Next-Gen Tech On Demand</span>
+                </div>
 
-<!-- Rental Items Grid -->
-<div class="container">
-  <h2 class="mb-4 text-center">RENTAL ITEMS</h2>
-  <div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for product in products %}
-    <div class="col">
-      <div class="card h-100">
-        {% if 'http' in product.image|stringformat:"s" %}
-          <img src="{{ product.image }}" class="card-img-top p-3" alt="{{ product.product_name }}" style="height: 220px; object-fit: contain;">
-        {% elif product.image %}
-          <img src="{{ product.image.url }}" class="card-img-top p-3" alt="{{ product.product_name }}" style="height: 220px; object-fit: contain;">
-        {% elif product.image_url %}
-          <img src="{{ product.image_url }}" class="card-img-top p-3" alt="{{ product.product_name }}" style="height: 220px; object-fit: contain;">
-        {% elif product.get_image_url %}
-          <img src="{{ product.get_image_url }}" class="card-img-top p-3" alt="{{ product.product_name }}" style="height: 220px; object-fit: contain;">
-        {% else %}
-          <img src="https://placehold.co/400x300?text={{ product.product_name|urlencode }}" class="card-img-top p-3" alt="{{ product.product_name }}" style="height: 220px; object-fit: contain;">
-        {% endif %}
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title">{{ product.product_name }}</h5>
-          <p class="card-text text-muted">{{ product.category }}</p>
-          <span class="badge bg-success mb-2">₹{{ product.rent_price }}/DAY</span>
-          <a href="{% url 'product_detail' product.id %}" class="btn btn-primary mt-auto">Rent Now</a>
+                <h1 class="display-5 fw-extrabold text-white mb-3 tracking-tight lh-sm">
+                    Experience Tomorrow’s Tech Today &mdash; <span class="text-warning">Rent Smart with FRICA</span>
+                </h1>
+
+                <p class="lead fs-6 text-white text-opacity-75 mb-4 lh-base" style="max-width: 620px;">
+                    From flagship smartphones and 8K OLED TVs to professional camera rigs and beast gaming laptops. Get instant paperless KYC verification, doorstep delivery, and flexible daily rental plans with zero lock-in.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+                    <a href="#gadget-catalog" class="btn btn-glow-cta px-4 py-3 fs-6 d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-rocket-takeoff-fill"></i>
+                        <span>Explore Catalog 🚀</span>
+                    </a>
+                    <button type="button" class="btn btn-warning px-4 py-3 rounded-pill fw-bold d-inline-flex align-items-center gap-2 shadow-sm text-dark" data-bs-toggle="modal" data-bs-target="#aiTechMatcherModal">
+                        <i class="bi bi-stars text-danger fs-5"></i>
+                        <span>AI Tech Matcher ✨</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-light px-4 py-3 rounded-pill fw-bold border-2 d-inline-flex align-items-center gap-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#howItWorksModal">
+                        <i class="bi bi-info-circle-fill text-warning"></i>
+                        <span>How FRICA Works ℹ️</span>
+                    </button>
+                </div>
+
+                <!-- Fast Perks Ticker -->
+                <div class="d-flex flex-wrap align-items-center gap-4 text-white text-opacity-80 small pt-2 border-top border-white border-opacity-15">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-patch-check-fill text-warning fs-5"></i>
+                        <span class="fw-semibold">100% Genuine Gadgets</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-lock-fill text-info fs-5"></i>
+                        <span class="fw-semibold">Insured With FRICA Care</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-lightning-charge-fill text-warning fs-5"></i>
+                        <span class="fw-semibold">Zero Hidden Deposit</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Visual & Glassmorphism Floating Badges -->
+            <div class="col-lg-5 text-center position-relative mt-4 mt-lg-0">
+                <!-- Center Hero Showcase Card -->
+                <div class="position-relative d-inline-block mx-auto" style="max-width: 360px;">
+                    <!-- Floating Badge 1 (Top Left) -->
+                    <div class="position-absolute top-0 start-0 translate-middle-y z-3 floating-badge-1" style="left: -15px !important; margin-top: 20px;">
+                        <div class="flica-glass-badge">
+                            <span class="fs-6">⚡</span>
+                            <div class="text-start">
+                                <div class="lh-1" style="font-size: 0.76rem;">Instant KYC</div>
+                                <small class="text-warning fw-bold" style="font-size: 0.68rem;">Paperless &bull; 60 Sec</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Badge 2 (Bottom Right) -->
+                    <div class="position-absolute bottom-0 end-0 translate-middle-y z-3 floating-badge-2" style="right: -20px !important; margin-bottom: 25px;">
+                        <div class="flica-glass-badge">
+                            <span class="fs-6">🛡️</span>
+                            <div class="text-start">
+                                <div class="lh-1" style="font-size: 0.76rem;">Zero Security</div>
+                                <small class="text-success fw-bold" style="font-size: 0.68rem;">100% Zero Deposit</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Badge 3 (Top Right) -->
+                    <div class="position-absolute top-0 end-0 z-3 floating-badge-3" style="right: -10px; margin-top: -15px;">
+                        <div class="flica-glass-badge">
+                            <span class="fs-6">📦</span>
+                            <div class="text-start">
+                                <div class="lh-1" style="font-size: 0.76rem;">2-Hour Express</div>
+                                <small class="text-info fw-bold" style="font-size: 0.68rem;">Doorstep Dispatch</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Showcase Graphic Container -->
+                    <div class="card border border-white border-opacity-20 rounded-4 overflow-hidden shadow-2xl bg-white bg-opacity-10" style="backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);">
+                        <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80"
+                             alt="Flagship Electronics" class="img-fluid rounded-4 p-2" style="max-height: 290px; object-fit: cover;">
+                        <div class="p-3 text-start bg-dark bg-opacity-50 border-top border-white border-opacity-10">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="badge bg-danger rounded-pill px-2 py-1 small fw-bold">HOT RENTAL</span>
+                                <span class="text-warning small fw-bold"><i class="bi bi-star-fill me-1"></i>4.9 / 5.0 (2.4k+ reviews)</span>
+                            </div>
+                            <h6 class="text-white fw-bold mb-0">Samsung Galaxy S25 Ultra 5G</h6>
+                            <small class="text-white-50">Starting at ₹999 / day &bull; Free Handover</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-    {% empty %}
-    <p class="text-center">No products available.</p>
-    {% endfor %}
-  </div>
+
+    <!-- ================= 0B. "WHY CHOOSE FRICA" FEATURE HIGHLIGHTS GRID ================= -->
+    <div class="mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 px-1">
+            <div>
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-award text-primary me-2"></i>Why Choose FRICA Gadget Rental?</h5>
+                <small class="text-muted">India's easiest, safest, and most affordable way to access elite tech.</small>
+            </div>
+            <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-2 rounded-pill d-none d-md-inline-block">
+                <i class="bi bi-shield-check me-1"></i> Verified &amp; Trusted
+            </span>
+        </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
+            <!-- Feature 1 -->
+            <div class="col">
+                <div class="flica-feature-card">
+                    <div class="flica-feature-icon bg-primary bg-opacity-10 text-primary">
+                        📱
+                    </div>
+                    <h6 class="fw-bold text-dark mb-2">Latest Tech Catalog</h6>
+                    <p class="text-muted small mb-0 lh-sm">
+                        80+ flagship gadgets from Apple, Samsung, Sony, HP, Asus &amp; more &mdash; tested and sanitized before every handover.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="col">
+                <div class="flica-feature-card">
+                    <div class="flica-feature-icon bg-warning bg-opacity-15 text-warning">
+                        ⚡
+                    </div>
+                    <h6 class="fw-bold text-dark mb-2">Simulated FRICA Pay</h6>
+                    <p class="text-muted small mb-0 lh-sm">
+                        Instant mock UPI, QR &amp; card checkout simulation with live booking generation and zero friction.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="col">
+                <div class="flica-feature-card">
+                    <div class="flica-feature-icon bg-success bg-opacity-10 text-success">
+                        📄
+                    </div>
+                    <h6 class="fw-bold text-dark mb-2">100% Paperless KYC</h6>
+                    <p class="text-muted small mb-0 lh-sm">
+                        Quick Aadhaar &amp; PAN verification completed digitally in under a minute without physical paperwork.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="col">
+                <div class="flica-feature-card">
+                    <div class="flica-feature-icon bg-info bg-opacity-10 text-info">
+                        🔄
+                    </div>
+                    <h6 class="fw-bold text-dark mb-2">Easy Tenure Extension</h6>
+                    <p class="text-muted small mb-0 lh-sm">
+                        Flexible daily rental extension right from the user dashboard. Return or extend anytime you choose.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 1. DYNAMIC HERO CAROUSEL BANNER ================= -->
+    <div id="heroPromotionsCarousel" class="carousel slide shadow-sm rounded-4 overflow-hidden mb-4" data-bs-ride="carousel" data-bs-interval="4500">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroPromotionsCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#heroPromotionsCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#heroPromotionsCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <!-- Slide 1: Flagships & OLEDs -->
+            <div class="carousel-item active" style="background: linear-gradient(135deg, #0d3b66 0%, #00509d 50%, #00296b 100%); min-height: 280px;">
+                <div class="container py-4 py-lg-5">
+                    <div class="row align-items-center g-4">
+                        <div class="col-md-7 text-white">
+                            <span class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill mb-2 text-uppercase tracking-wider">
+                                <i class="bi bi-fire me-1"></i> Mega Gadget Rental Festival
+                            </span>
+                            <h1 class="display-6 fw-extrabold mb-2 text-white">
+                                Flagship Phones &amp; 85" 4K OLEDs
+                            </h1>
+                            <p class="lead fs-6 text-white-50 mb-3" style="max-width: 520px;">
+                                Rent Samsung Galaxy S25 Ultra, iPhone 18 Pro Max, and Sony Bravia XR QD-OLEDs starting at just ₹149/day. Zero Security Deposit.
+                            </p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{% url 'category' 'Mobiles' %}" class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow">
+                                    <i class="bi bi-phone me-1"></i> Rent Phones Now
+                                </a>
+                                <a href="{% url 'category' 'TV' %}" class="btn btn-outline-light fw-bold px-4 py-2 rounded-pill">
+                                    <i class="bi bi-tv me-1"></i> Explore Smart TVs
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-5 text-center d-none d-md-block">
+                            <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+                                 alt="Flagship Phones" class="img-fluid rounded-4 shadow-lg border border-white border-opacity-25" style="max-height: 220px; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Weekend Cinema & Cameras -->
+            <div class="carousel-item" style="background: linear-gradient(135deg, #78350f 0%, #b45309 50%, #92400e 100%); min-height: 280px;">
+                <div class="container py-4 py-lg-5">
+                    <div class="row align-items-center g-4">
+                        <div class="col-md-7 text-white">
+                            <span class="badge bg-danger text-white fw-bold px-3 py-2 rounded-pill mb-2 text-uppercase tracking-wider">
+                                <i class="bi bi-camera-reels-fill me-1"></i> Production &amp; Wedding Kits
+                            </span>
+                            <h2 class="display-6 fw-extrabold mb-2 text-white">
+                                8K RAW Cinema &amp; Mirrorless Gear
+                            </h2>
+                            <p class="lead fs-6 text-white-50 mb-3" style="max-width: 520px;">
+                                Sony FX3, Canon EOS R5 Mark II, and Nikon Z8 ready for your next commercial, short film, or wedding shoot. 100% Insured with FRICA Care.
+                            </p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{% url 'category' 'Camera' %}" class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow">
+                                    <i class="bi bi-camera-fill me-1"></i> Browse Camera Gear
+                                </a>
+                                <a href="{% url 'category' 'Audio' %}" class="btn btn-outline-light fw-bold px-4 py-2 rounded-pill">
+                                    <i class="bi bi-speaker-fill me-1"></i> JBL Soundbars
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-5 text-center d-none d-md-block">
+                            <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&q=80"
+                                 alt="Pro Cameras" class="img-fluid rounded-4 shadow-lg border border-white border-opacity-25" style="max-height: 220px; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: RTX Gaming & MacBook Pro -->
+            <div class="carousel-item" style="background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #065f46 100%); min-height: 280px;">
+                <div class="container py-4 py-lg-5">
+                    <div class="row align-items-center g-4">
+                        <div class="col-md-7 text-white">
+                            <span class="badge bg-info text-dark fw-bold px-3 py-2 rounded-pill mb-2 text-uppercase tracking-wider">
+                                <i class="bi bi-cpu-fill me-1"></i> Esports &amp; Studio Workstations
+                            </span>
+                            <h2 class="display-6 fw-extrabold mb-2 text-white">
+                                RTX 4080 Super Desktops &amp; M4 MacBooks
+                            </h2>
+                            <p class="lead fs-6 text-white-50 mb-3" style="max-width: 520px;">
+                                Power through 4K rendering, LLM fine-tuning, and ultra-high FPS gaming. Rent by day or month with doorstep pickup.
+                            </p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{% url 'category' 'Laptop' %}" class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow">
+                                    <i class="bi bi-laptop me-1"></i> Laptops &amp; Macs
+                                </a>
+                                <a href="{% url 'category' 'Computers' %}" class="btn btn-outline-light fw-bold px-4 py-2 rounded-pill">
+                                    <i class="bi bi-pc-display me-1"></i> Gaming Desktops
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-5 text-center d-none d-md-block">
+                            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80"
+                                 alt="MacBook Pro" class="img-fluid rounded-4 shadow-lg border border-white border-opacity-25" style="max-height: 220px; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroPromotionsCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroPromotionsCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- ================= 2. FLIPKART STYLE VALUE PROPOSITION STRIP ================= -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white p-3">
+        <div class="row g-3 text-center text-md-start">
+            <div class="col-6 col-md-3 d-flex align-items-center gap-3 justify-content-center justify-content-md-start border-end">
+                <div class="rounded-circle p-2 bg-success bg-opacity-10 text-success fs-3">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">Zero Security Deposit</h6>
+                    <small class="text-muted">Digital KYC verification</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 d-flex align-items-center gap-3 justify-content-center justify-content-md-start border-end">
+                <div class="rounded-circle p-2 bg-primary bg-opacity-10 text-primary fs-3">
+                    <i class="bi bi-truck"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">Free Doorstep Delivery</h6>
+                    <small class="text-muted">Fast &amp; insured handover</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 d-flex align-items-center gap-3 justify-content-center justify-content-md-start border-end">
+                <div class="rounded-circle p-2 bg-warning bg-opacity-10 text-warning fs-3">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">Flexible Extensions</h6>
+                    <small class="text-muted">Extend or return anytime</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 d-flex align-items-center gap-3 justify-content-center justify-content-md-start">
+                <div class="rounded-circle p-2 bg-info bg-opacity-10 text-info fs-3">
+                    <i class="bi bi-award-fill"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">100% Tested Devices</h6>
+                    <small class="text-muted">Covered under FRICA Care</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 2B. TRUSTED BRANDS AVAILABLE FOR RENT ================= -->
+    <div class="brand-showcase-section mb-4">
+        <!-- Section Header -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 pb-2 border-bottom">
+            <div>
+                <div class="d-inline-flex align-items-center gap-1 badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1 rounded-pill small mb-1">
+                    <i class="bi bi-patch-check-fill text-primary"></i> 100% Certified Tech Partners
+                </div>
+                <h4 class="fw-extrabold text-dark mb-0">
+                    <span class="brand-heading-gradient">Trusted Brands</span> Available For Rent
+                </h4>
+                <p class="text-muted small mb-0">Rent premium gear from the world's most trusted tech giants with zero deposit</p>
+            </div>
+            {% if current_brand %}
+                <a href="{% url 'home' %}{% if current_category and current_category != 'All' %}?category={{ current_category }}{% endif %}#gadget-catalog"
+                   class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold shadow-xs">
+                    <i class="bi bi-x-circle me-1"></i> Clear Brand Filter ({{ current_brand }})
+                </a>
+            {% else %}
+                <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill small d-none d-sm-inline-block">
+                    <i class="bi bi-grid-3x3-gap-fill me-1 text-primary"></i> 12 Top Tier Brands Ready
+                </span>
+            {% endif %}
+        </div>
+
+        <!-- Brand Cards Track (Responsive Grid on Desktop / Smooth Touch Scroll on Mobile) -->
+        <div class="brand-scroll-track">
+            <!-- 1. Apple -->
+            <div class="brand-col-card">
+                <a href="{% url 'home' %}?brand=Apple#gadget-catalog" class="brand-card-item {% if current_brand == 'Apple' %}active{% endif %}" title="Rent Apple Products">
+                    <div class="brand-logo-icon-wrap text-dark">
+                        <svg viewBox="0 0 170 170" width="34" height="34" fill="currentColor">
+                            <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.08-7.7-7.94-12-14.58-6.19-9.5-11.05-20.48-14.58-32.94-3.53-12.45-5.29-24.12-5.29-35 0-14.36 3.65-26.4 10.95-36.12 7.3-9.72 16.59-14.7 27.87-14.94 4.58 0 9.87 1.25 15.87 3.75s9.86 3.75 11.58 3.75c1.47 0 5.44-1.32 11.91-3.96s11.99-3.83 16.56-3.56c12.7.74 22.8 4.88 30.29 12.43-11.07 6.72-16.5 15.93-16.29 27.63.22 9.29 3.86 17.15 10.92 23.57 7.07 6.42 15.53 10.15 25.38 11.2-2.18 6.54-4.8 13.08-7.87 19.64zM119.22 33.15c0-7.23 2.65-14.16 7.95-20.78 5.3-6.62 11.89-10.87 19.78-12.75.22 1.09.33 2.18.33 3.27 0 7.23-2.73 14.17-8.18 20.82-5.45 6.64-12.08 10.8-19.88 12.48-.22-1.04-.33-2.05-.33-3.04z"/>
+                        </svg>
+                    </div>
+                    <div class="brand-card-name">Apple</div>
+                    <div class="brand-card-tagline">iPhone 18/17 Pro &amp; M-Series Macs</div>
+                </a>
+            </div>
+
+            <!-- 2. Sony -->
+            <div class="brand-col-card">
+                <a href="{% url 'home' %}?brand=Sony#gadget-catalog" class="brand-card-item {% if current_brand == 'Sony' %}active{% endif %}" title="Rent Sony Products">
+                    <div class="brand-logo-icon-wrap">
+                        <span class="fw-extrabold text-dark fs-5 font-monospace" style="letter-spacing: 3px; font-family: 'Arial Black', sans-serif;">SONY</span>
+                    </div>
+                    <div class="brand-card-name">Sony</div>
+                    <div class="brand-card-tagline">4K OLEDs &amp; Full-Frame Cameras</div>
+                </a>
+            </div>
+
+            <!-- 3. Samsung -->
+            <div class="brand-col-card">
+                <a href="{% url 'home' %}?brand=Samsung#gadget-catalog" class="brand-card-item {% if current_brand == 'Samsung' %}active{% endif %}" title="Rent Samsung Products">
+                    <div class="brand-logo-icon-wrap">
+                        <span class="badge bg-primary text-white px-2 py-1 rounded-pill fw-bold" style="letter-spacing: 1.5px; font-size: 0.78rem;">SAMSUNG</span>
+                    </div>
+                    <div class="brand-card-name">Samsung</div>
+                    <div class="brand-card-tagline">Galaxy S25/24 &amp; Neo QLED TVs</div>
+                </a>
+            </div>
+
+            <!-- 4. Canon -->
+            <div class="brand-col-card">
+                <a href="{% url 'home' %}?brand=Canon#gadget-catalog" class="brand-card-item {% if current_brand == 'Canon' %}active{% endif %}" title="Rent Canon Products">
+                    <div class="brand-logo-icon-wrap">
+                        <span class="fw-extrabold text-danger fs-5" style="letter-spacing: 1px; font-family: 'Arial Black', sans-serif;">Canon</span>
+                    </div>
+                    <div class="brand-card-name">Canon</div>
+                    <div class="brand-card-tagline">Cinema EOS &amp; RF Mirrorless Gear</div>
+                </a>
+            </div>
+
+            <!-- 5. HP -->
+            <div class="brand-col-card">
+                <a href="{% url 'home' %}?brand=HP#gadget-catalog" class="brand-card-item {% if current_brand == 'HP' %}active{% endif %}" title="Rent HP Products">
+                    <div class="brand-logo-icon-wrap">
+                        <span class="rounded-circle text-white d-inline-flex align-items-center justify-content-center fw-bold fs-5 fst-italic" style="width: 38px; height: 38px; background: #0096d6;">hp</span>
+                    </div>
+                    <div class="brand-card-name">HP</div>
+                    <div class="brand-card-tagline">Victus &amp; Pavilion Studio Rigs</div>
+                </a>
+            </div>
+
+            <!-- 6. Lenovo -->
+            <div class="brand-col-card">
+                <a href="{% url 'home' %}?brand=Lenovo#gadget-catalog" class="brand-card-item {% if current_brand == 'Lenovo' %}active{% endif %}" title="Rent Lenovo Products">
+                    <div class="brand-logo-icon-wrap">
+                        <span class="badge bg-danger text-white px-2 py-1 fw-bold fs-6" style="letter-spacing: 0.5px; transform: rotate(-2deg);">Lenovo</span>
+                    </div>
+                    <div class="brand-card-name">Lenovo</div>
+                    <div class="brand-card-tagline">Legion &amp; LOQ Esports Rigs</div>
+                </a>
+            </div>
+
+            <!-- 7. Asus -->
+            <div class="brand-col-card">
+                <a href="{% url 'home' %}?brand=ASUS#gadget-catalog" class="brand-card-item {% if current_brand == 'ASUS' or current_brand == 'Asus' %}active{% endif %}" title="Rent ASUS Products">
+                    <div class="brand-logo-icon-wrap">
+                        <span class="fw-extrabold text-dark fs-6" style="letter-spacing: 2px;"><span class="text-danger">ROG</span> ASUS</span>
+                    </div>
+                    <div class="brand-card-name">ASUS</div>
+                    <div class="brand-card-tagline">ROG Zephyrus &amp; TUF Laptops</div>
+                </a>
+            </div>
+
+            <!-- 8. JBL -->
+            <div class="brand-col-card">
+                <a href="{% url 'home' %}?brand=JBL#gadget-catalog" class="brand-card-item {% if current_brand == 'JBL' %}active{% endif %}" title="Rent JBL Products">
+                    <div class="brand-logo-icon-wrap">
+                        <span class="badge text-white fw-extrabold px-3 py-1 rounded-2 fs-6" style="background: #ff5500;">JBL</span>
+                    </div>
+                    <div class="brand-card-name">JBL</div>
+                    <div class="brand-card-tagline">PartyBox &amp; Dolby Atmos Audio</div>
+                </a>
+            </div>
+
+            <!-- 9. Nikon -->
+            <div class="brand-col-card">
+                <a href="{% url 'home' %}?brand=Nikon#gadget-catalog" class="brand-card-item {% if current_brand == 'Nikon' %}active{% endif %}" title="Rent Nikon Products">
+                    <div class="brand-logo-icon-wrap">
+                        <span class="badge text-dark fw-extrabold fst-italic px-2 py-1 fs-6" style="background: #ffe600;">Nikon</span>
+                    </div>
+                    <div class="brand-card-name">Nikon</div>
+                    <div class="brand-card-tagline">Z8 &amp; Z9 8K Cinema Mirrorless</div>
+                </a>
+            </div>
+
+            <!-- 10. Vivo -->
+            <div class="brand-col-card">
+                <a href="{% url 'home' %}?brand=Vivo#gadget-catalog" class="brand-card-item {% if current_brand == 'Vivo' %}active{% endif %}" title="Rent Vivo Products">
+                    <div class="brand-logo-icon-wrap">
+                        <span class="fw-extrabold text-primary fs-5" style="letter-spacing: 1.5px;">vivo</span>
+                    </div>
+                    <div class="brand-card-name">Vivo</div>
+                    <div class="brand-card-tagline">Zeiss Pro Photography Phones</div>
+                </a>
+            </div>
+
+            <!-- 11. OnePlus -->
+            <div class="brand-col-card">
+                <a href="{% url 'home' %}?brand=OnePlus#gadget-catalog" class="brand-card-item {% if current_brand == 'OnePlus' %}active{% endif %}" title="Rent OnePlus Products">
+                    <div class="brand-logo-icon-wrap">
+                        <span class="badge bg-danger text-white fw-bold px-2 py-1 fs-6 rounded-1">1+ ONEPLUS</span>
+                    </div>
+                    <div class="brand-card-name">OnePlus</div>
+                    <div class="brand-card-tagline">OnePlus 13 &amp; Open Foldables</div>
+                </a>
+            </div>
+
+            <!-- 12. Google Pixel -->
+            <div class="brand-col-card">
+                <a href="{% url 'home' %}?brand=Google#gadget-catalog" class="brand-card-item {% if current_brand == 'Google' or current_brand == 'Google Pixel' %}active{% endif %}" title="Rent Google Pixel Products">
+                    <div class="brand-logo-icon-wrap">
+                        <span class="fw-bold fs-6 text-dark d-flex align-items-center gap-1">
+                            <i class="bi bi-google text-primary"></i> Pixel
+                        </span>
+                    </div>
+                    <div class="brand-card-name">Google Pixel</div>
+                    <div class="brand-card-tagline">Pixel 9 Pro &amp; Tensor AI Phones</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 3. POPULAR BRANDS QUICK FILTER ================= -->
+    <div class="d-flex align-items-center gap-2 overflow-x-auto pb-2 mb-3" style="white-space: nowrap;">
+        <span class="fw-bold text-muted small text-uppercase me-1"><i class="bi bi-tags-fill me-1"></i>Top Brands:</span>
+        <a href="{% url 'home' %}{% if current_category and current_category != 'All' %}?category={{ current_category }}{% endif %}"
+           class="badge {% if not current_brand %}bg-primary text-white{% else %}bg-white text-dark border{% endif %} text-decoration-none px-3 py-2 rounded-pill shadow-xs">
+            All Brands
+        </a>
+        {% for brand_name in top_brands %}
+            <a href="{% url 'home' %}?brand={{ brand_name }}{% if current_category and current_category != 'All' %}&category={{ current_category }}{% endif %}"
+               class="badge {% if current_brand == brand_name %}bg-primary text-white{% else %}bg-white text-dark border{% endif %} text-decoration-none px-3 py-2 rounded-pill shadow-xs">
+                {{ brand_name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- ================= 4. RESULTS HEADER & SORTING BAR ================= -->
+    <div id="gadget-catalog" class="card border-0 shadow-sm rounded-4 mb-3 p-3 bg-white" style="scroll-margin-top: 130px;">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+                <h5 class="fw-bold text-dark mb-0">
+                    {% if current_category and current_category != 'All' %}
+                        {{ current_category }}
+                    {% else %}
+                        All Electronic Gadgets
+                    {% endif %}
+                    {% if current_brand %}
+                        <span class="text-primary">&bull; {{ current_brand }}</span>
+                    {% endif %}
+                    {% if search_query %}
+                        <span class="text-muted fs-6">&bull; Results for "{{ search_query }}"</span>
+                    {% endif %}
+                </h5>
+                <small class="text-muted">Showing {{ total_count }} verified rental items ready for dispatch</small>
+            </div>
+
+            <!-- Sorting Options -->
+            <div class="d-flex align-items-center gap-2">
+                <span class="small text-muted fw-semibold">Sort By:</span>
+                <div class="btn-group btn-group-sm" role="group">
+                    <a href="?sort=popular{% if current_category %}&category={{ current_category }}{% endif %}{% if current_brand %}&brand={{ current_brand }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}"
+                       class="btn btn-outline-secondary {% if current_sort == 'popular' or not current_sort %}active fw-bold{% endif %}">
+                        Popularity
+                    </a>
+                    <a href="?sort=price_low{% if current_category %}&category={{ current_category }}{% endif %}{% if current_brand %}&brand={{ current_brand }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}"
+                       class="btn btn-outline-secondary {% if current_sort == 'price_low' %}active fw-bold{% endif %}">
+                        Price: Low to High
+                    </a>
+                    <a href="?sort=price_high{% if current_category %}&category={{ current_category }}{% endif %}{% if current_brand %}&brand={{ current_brand }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}"
+                       class="btn btn-outline-secondary {% if current_sort == 'price_high' %}active fw-bold{% endif %}">
+                        Price: High to Low
+                    </a>
+                    <a href="?sort=rating{% if current_category %}&category={{ current_category }}{% endif %}{% if current_brand %}&brand={{ current_brand }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}"
+                       class="btn btn-outline-secondary {% if current_sort == 'rating' %}active fw-bold{% endif %}">
+                        Ratings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 5. GADGET CARDS GRID (AMAZON / FLIPKART STYLE) ================= -->
+    {% if products %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 mb-5">
+        {% for product in products %}
+        <div class="col">
+            <div class="fk-card">
+                <!-- Thumbnail & Badges -->
+                <div class="fk-card-img-wrap">
+                    <!-- Discount/Trending Badge -->
+                    <span class="fk-badge-discount">
+                        {% if product.rent_price > 700 %}
+                            Flagship Deal
+                        {% elif product.rent_price < 250 %}
+                            Best Value
+                        {% else %}
+                            Hot Rental
+                        {% endif %}
+                    </span>
+
+                    <!-- Wishlist Heart Toggle Button -->
+                    <button type="button" class="wishlist-toggle-btn" data-product-id="{{ product.id }}" title="{% if product.id in user_wishlist_ids %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}" aria-label="Toggle Wishlist">
+                        <i class="bi {% if product.id in user_wishlist_ids %}bi-heart-fill text-danger{% else %}bi-heart text-secondary{% endif %} fs-6"></i>
+                    </button>
+
+                    <!-- Gadget Image -->
+                    {% if 'http' in product.image|stringformat:"s" %}
+                        <img src="{{ product.image }}" class="fk-card-img" alt="{{ product.product_name }}" loading="lazy">
+                    {% elif product.image %}
+                        <img src="{{ product.image.url }}" class="fk-card-img" alt="{{ product.product_name }}" loading="lazy">
+                    {% elif product.get_image_url %}
+                        <img src="{{ product.get_image_url }}" class="fk-card-img" alt="{{ product.product_name }}" loading="lazy">
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="bi bi-laptop fs-1"></i>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Card Details Body -->
+                <div class="p-3 d-flex flex-column flex-grow-1">
+                    <!-- Brand & Category -->
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="text-muted small fw-bold text-uppercase tracking-wider">
+                            {{ product.brand|default:product.category }}
+                        </span>
+                        <span class="badge bg-light text-secondary border small">
+                            {{ product.category }}
+                        </span>
+                    </div>
+
+                    <!-- Title -->
+                    <h6 class="fw-bold text-dark mb-1 text-truncate" title="{{ product.product_name }}">
+                        <a href="{% url 'product_detail' product.id %}" class="text-dark text-decoration-none hover-primary">
+                            {{ product.product_name }}
+                        </a>
+                    </h6>
+
+                    <!-- Rating & Reviews -->
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="fk-rating-badge">
+                            {{ product.rating|default:"4.8" }} <i class="bi bi-star-fill" style="font-size: 0.65rem;"></i>
+                        </span>
+                        <span class="text-muted small">({{ product.reviews_count|default:"45" }}+ reviews)</span>
+                    </div>
+
+                    <!-- Tech Specs Pills -->
+                    <div class="mb-3 d-flex flex-wrap gap-1">
+                        {% for chip in product.specs_preview %}
+                            <span class="badge bg-light text-dark border small font-monospace py-1" style="font-size: 0.72rem;">
+                                {{ chip.key }}: {{ chip.value }}
+                            </span>
+                        {% empty %}
+                            <span class="badge bg-light text-muted border small py-1" style="font-size: 0.72rem;">
+                                Premium Certified
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Pricing & Deposit Info -->
+                    <div class="mt-auto pt-2 border-top">
+                        <div class="d-flex align-items-baseline gap-2 mb-1">
+                            <span class="fs-4 fw-extrabold text-dark">₹{{ product.rent_price|floatformat:0 }}</span>
+                            <span class="text-muted small">/ Day</span>
+                            <span class="text-muted small text-decoration-line-through">₹{{ product.rent_price|add:150|floatformat:0 }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-success small fw-bold">
+                                <i class="bi bi-shield-check me-1"></i>Zero Deposit
+                            </span>
+                            <span class="text-muted small">
+                                <i class="bi bi-truck me-1"></i>Free Delivery
+                            </span>
+                        </div>
+
+                        <!-- CTA Actions -->
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'product_detail' product.id %}" class="btn fk-btn-rent text-center">
+                                <i class="bi bi-lightning-charge-fill me-1"></i> Rent Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty Search / Filter State -->
+    <div class="card border-0 shadow-sm rounded-4 text-center py-5 my-4 bg-white">
+        <div class="py-5">
+            <i class="bi bi-search text-muted display-1 mb-3"></i>
+            <h4 class="fw-bold text-dark mb-1">No Gadgets Found</h4>
+            <p class="text-muted mb-4 mx-auto" style="max-width: 450px;">
+                We couldn't find any electronics matching your criteria. Try resetting your search or browse all categories.
+            </p>
+            <a href="{% url 'home' %}" class="btn btn-primary rounded-pill px-4 fw-bold">
+                <i class="bi bi-arrow-repeat me-1"></i> Reset All Filters
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ================= 6. HOW FRICA WORKS MODAL ================= -->
+    <div class="modal fade" id="howItWorksModal" tabindex="-1" aria-labelledby="howItWorksModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header text-white p-4" style="background: linear-gradient(135deg, #0b192c 0%, #1e3a8a 100%);">
+                    <div>
+                        <div class="badge bg-warning text-dark fw-bold px-2 py-1 rounded-pill mb-1 small">SIMPLE 4-STEP RENTAL</div>
+                        <h5 class="modal-title fw-bold text-white mb-0" id="howItWorksModalLabel">
+                            <i class="bi bi-lightning-charge-fill text-warning me-1"></i> How FRICA Gadget Rental Works
+                        </h5>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 p-md-5 bg-light">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start gap-3 p-3 bg-white rounded-3 shadow-xs border h-100">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold fs-5 flex-shrink-0" style="width: 44px; height: 44px;">
+                                    1
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">Pick Your Gadget</h6>
+                                    <p class="text-muted small mb-0">Browse through our 80+ catalog across Mobiles, Cameras, Laptops, TVs &amp; Gaming PCs. Select your preferred daily tenure.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start gap-3 p-3 bg-white rounded-3 shadow-xs border h-100">
+                                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold fs-5 flex-shrink-0" style="width: 44px; height: 44px;">
+                                    2
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">Paperless Digital KYC</h6>
+                                    <p class="text-muted small mb-0">Enter your Aadhaar and PAN details once in your profile. Digital verification approves your account with zero security deposit.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start gap-3 p-3 bg-white rounded-3 shadow-xs border h-100">
+                                <div class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center fw-bold fs-5 flex-shrink-0" style="width: 44px; height: 44px;">
+                                    3
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">Simulated FRICA Pay</h6>
+                                    <p class="text-muted small mb-0">Check out with our seamless dummy payment gateway supporting mock UPI, QR codes, credit/debit cards, or pay on handover.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start gap-3 p-3 bg-white rounded-3 shadow-xs border h-100">
+                                <div class="rounded-circle bg-info text-white d-flex align-items-center justify-content-center fw-bold fs-5 flex-shrink-0" style="width: 44px; height: 44px;">
+                                    4
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">Doorstep Delivery &amp; Enjoy</h6>
+                                    <p class="text-muted small mb-0">Get sanitized, fully working gadgets delivered right to your doorstep. Easily extend tenure or schedule returns anytime from your dashboard.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4 pt-2">
+                        <a href="#gadget-catalog" class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow-sm" data-bs-dismiss="modal">
+                            <i class="bi bi-rocket-takeoff-fill me-1"></i> Start Renting Today
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

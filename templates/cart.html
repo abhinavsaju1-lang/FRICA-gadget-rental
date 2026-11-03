@@ -23,8 +23,8 @@
         <!-- Cart Items List Table -->
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
-                <div class="card-header bg-primary text-white py-3 px-4">
-                    <h5 class="mb-0 fw-semibold">
+                <div class="card-header text-white py-3 px-4" style="background: linear-gradient(135deg, #2874f0 0%, #1a56db 100%);">
+                    <h5 class="mb-0 fw-bold">
                         <i class="bi bi-bag-check me-2"></i>Selected Gadgets ({{ cart_items|length }})
                     </h5>
                 </div>
@@ -137,9 +137,9 @@
                     <span class="fs-4 fw-bold text-primary">₹{{ grand_total|floatformat:2 }}</span>
                 </div>
 
-                <!-- Trigger Payment Modal -->
-                <button type="button" class="btn btn-primary btn-lg rounded-pill w-100 fw-bold py-3 shadow-sm mb-3" data-bs-toggle="modal" data-bs-target="#paymentGatewayModal">
-                    <i class="bi bi-credit-card-2-front me-2"></i>Checkout &amp; Rent Now
+                <!-- Trigger Payment Modal (Amazon / Flipkart Style) -->
+                <button type="button" class="btn btn-lg rounded-pill w-100 fw-bold py-3 shadow mb-3 text-white" style="background: #fb641b; border: none;" data-bs-toggle="modal" data-bs-target="#paymentGatewayModal">
+                    <i class="bi bi-lightning-charge-fill me-1"></i> Proceed to Checkout &amp; Pay
                 </button>
 
                 <div class="alert alert-info py-2 px-3 small rounded-3 mb-3 d-flex align-items-center gap-2">

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}FRICA - Premium Electronic Gadget Rentals{% endblock %}</title>
+    <title>{% block title %}FRICA - Online Electronic Gadget Rentals (Explore Plus Deals){% endblock %}</title>
 
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,119 +12,945 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5.3.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.py" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Local fallback/actual bootstrap css via cdn -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
     <!-- Custom Theme CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        :root {
+            --fk-blue: #2874f0;
+            --fk-dark-blue: #1a56db;
+            --fk-yellow: #ff9f00;
+            --fk-orange: #fb641b;
+            --fk-green: #388e3c;
+            --fk-bg: #f1f3f6;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--fk-bg);
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            color: #212121;
+        }
+
+        /* Top Header Navbar */
+        .navbar-fk-main {
+            background: linear-gradient(180deg, #2874f0 0%, #1a56db 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            padding-top: 0.65rem;
+            padding-bottom: 0.65rem;
+        }
+
+        /* Brand Badge Glow & Tagline */
+        .brand-badge-glow {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #4f46e5 100%);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.25rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 0 15px rgba(255, 225, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .brand-badge-glow:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(255, 225, 0, 0.7);
+        }
+
+        .brand-tagline {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: #ffe500;
+            letter-spacing: 0.3px;
+        }
+
+        /* Nav links hover underline animation */
+        .fk-cat-item {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.25rem;
+            color: #333333;
+            text-decoration: none;
+            font-size: 0.84rem;
+            font-weight: 600;
+            transition: color 0.2s, transform 0.2s;
+            position: relative;
+        }
+
+        .fk-cat-item::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            right: 50%;
+            height: 3px;
+            background-color: #2874f0;
+            transition: all 0.25s ease-in-out;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .fk-cat-item:hover {
+            color: #2874f0;
+            transform: translateY(-1px);
+        }
+
+        .fk-cat-item:hover::after {
+            left: 15%;
+            right: 15%;
+        }
+
+        .fk-cat-item.active {
+            color: #2874f0;
+            font-weight: 700;
+        }
+
+        .fk-cat-item.active::after {
+            left: 15%;
+            right: 15%;
+            background-color: #2874f0;
+        }
+
+        .fk-cat-icon {
+            font-size: 1.35rem;
+            margin-bottom: 0.2rem;
+        }
+
+        /* Animated Landing Hero & Mesh Background */
+        .flica-hero-mesh {
+            background: linear-gradient(135deg, #070d1e 0%, #0f244c 35%, #172554 70%, #1e1b4b 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 12s ease infinite;
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.35);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Ambient Glow Blobs */
+        .hero-glow-blob-1 {
+            position: absolute;
+            top: -20%;
+            right: 10%;
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, rgba(40, 116, 240, 0.35) 0%, rgba(40, 116, 240, 0) 70%);
+            filter: blur(40px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero-glow-blob-2 {
+            position: absolute;
+            bottom: -15%;
+            left: 20%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(251, 100, 27, 0.25) 0%, rgba(251, 100, 27, 0) 70%);
+            filter: blur(50px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Glassmorphism Badges & Floating Animations */
+        .flica-glass-badge {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: #ffffff;
+            padding: 0.55rem 1.1rem;
+            border-radius: 50rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.28);
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .flica-glass-badge:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.04);
+        }
+
+        @keyframes floatBadge1 {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+        @keyframes floatBadge2 {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-14px) rotate(-1.5deg); }
+        }
+        @keyframes floatBadge3 {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-9px) rotate(1.2deg); }
+        }
+
+        .floating-badge-1 { animation: floatBadge1 4.5s ease-in-out infinite; }
+        .floating-badge-2 { animation: floatBadge2 5.2s ease-in-out infinite 0.6s; }
+        .floating-badge-3 { animation: floatBadge3 4.2s ease-in-out infinite 1.2s; }
+
+        /* Glowing CTA Buttons */
+        .btn-glow-cta {
+            background: linear-gradient(135deg, #ff9f00 0%, #fb641b 100%);
+            color: #ffffff !important;
+            font-weight: 800;
+            border: none;
+            border-radius: 50rem;
+            box-shadow: 0 0 20px rgba(251, 100, 27, 0.6);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: pulseGlow 2.5s infinite;
+        }
+
+        .btn-glow-cta:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 35px rgba(251, 100, 27, 0.9);
+            color: #ffffff !important;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(251, 100, 27, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(251, 100, 27, 0.8); }
+            100% { box-shadow: 0 0 15px rgba(251, 100, 27, 0.4); }
+        }
+
+        /* Feature Highlight Cards */
+        .flica-feature-card {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 1.1rem;
+            padding: 1.5rem 1.25rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            height: 100%;
+        }
+
+        .flica-feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 30px rgba(40, 116, 240, 0.15);
+            border-color: #93c5fd;
+        }
+
+        .flica-feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .flica-feature-card:hover .flica-feature-icon {
+            transform: scale(1.12) rotate(4deg);
+        }
+
+        /* Amazon/Flipkart Search Bar */
+        .fk-search-wrap {
+            max-width: 680px;
+            width: 100%;
+        }
+
+        .fk-search-group {
+            background: #ffffff;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .fk-cat-select {
+            background-color: #f3f3f3;
+            border: none;
+            border-right: 1px solid #ddd;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #333;
+            padding: 0 10px;
+            max-width: 145px;
+            cursor: pointer;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .fk-cat-select:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .fk-search-input {
+            border: none;
+            font-size: 0.9rem;
+            padding: 0.6rem 1rem;
+        }
+
+        .fk-search-input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .fk-search-btn {
+            background: #ffc200;
+            color: #111;
+            border: none;
+            padding: 0 1.25rem;
+            font-size: 1.1rem;
+            transition: background 0.2s;
+        }
+
+        .fk-search-btn:hover {
+            background: #ff9f00;
+            color: #000;
+        }
+
+        /* Flipkart Category Ribbon Sub-navbar */
+        .fk-category-bar {
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            white-space: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .fk-category-bar::-webkit-scrollbar {
+            height: 3px;
+        }
+
+        .fk-category-bar::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        /* Cart Badge */
+        .fk-cart-btn {
+            color: #ffffff;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.95rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            transition: background 0.15s;
+        }
+
+        .fk-cart-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        .fk-login-btn {
+            background: #ffffff;
+            color: #2874f0 !important;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 2px;
+            padding: 0.45rem 1.6rem;
+            border: 1px solid #dbdbdb;
+            transition: all 0.2s;
+        }
+
+        .fk-login-btn:hover {
+            background: #f0f0f0;
+            color: #1a56db !important;
+        }
+
+        /* Product Card Amazon/Flipkart */
+        .fk-card {
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #e7e7e7;
+            transition: box-shadow 0.25s, transform 0.25s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .fk-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            transform: translateY(-3px);
+            border-color: #c7d2fe;
+        }
+
+        .fk-card-img-wrap {
+            height: 220px;
+            background: #fafafa;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            overflow: hidden;
+        }
+
+        .fk-card-img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .fk-card:hover .fk-card-img {
+            transform: scale(1.06);
+        }
+
+        .fk-badge-discount {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #388e3c;
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .fk-rating-badge {
+            background: #388e3c;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .fk-btn-rent {
+            background: #fb641b;
+            color: #ffffff;
+            font-weight: 700;
+            border: none;
+            border-radius: 4px;
+            padding: 0.6rem 1rem;
+            font-size: 0.88rem;
+            transition: background 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .fk-btn-rent:hover {
+            background: #e0530f;
+            color: #ffffff;
+        }
+
+        /* Delivery Location Widget (Amazon/Flipkart Style) */
+        .flica-location-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 0.35rem 0.65rem !important;
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .flica-location-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.45) !important;
+            transform: translateY(-1px);
+        }
+
+        /* Wishlist Header Button */
+        .fk-wishlist-btn {
+            color: #ffffff;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.95rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            transition: background 0.15s;
+        }
+
+        .fk-wishlist-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        /* Wishlist Floating Heart Button on Product Card */
+        .wishlist-toggle-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 4;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, box-shadow 0.2s;
+        }
+
+        .wishlist-toggle-btn:hover {
+            transform: scale(1.18);
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+            border-color: #fca5a5;
+        }
+
+        .wishlist-toggle-btn i {
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        .wishlist-toggle-btn:active i {
+            transform: scale(1.35);
+        }
+
+        /* Brand Showcase Strip / Grid (Trusted Brands Available For Rent) */
+        .brand-showcase-section {
+            background: #ffffff;
+            border-radius: 1.25rem;
+            border: 1px solid rgba(0, 0, 0, 0.07);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .brand-heading-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #4f46e5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-card-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.15rem 0.85rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            text-decoration: none;
+            color: #1e293b;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            min-height: 140px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+        }
+
+        .brand-card-item::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #2563eb, #38bdf8);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .brand-card-item:hover {
+            transform: translateY(-5px);
+            background: #ffffff;
+            border-color: #93c5fd;
+            box-shadow: 0 12px 24px -4px rgba(37, 99, 235, 0.16), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
+            color: #1d4ed8;
+        }
+
+        .brand-card-item:hover::before {
+            opacity: 1;
+        }
+
+        .brand-card-item.active {
+            background: #f0f7ff;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+            color: #1d4ed8;
+        }
+
+        .brand-card-item.active::before {
+            opacity: 1;
+        }
+
+        .brand-logo-icon-wrap {
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.65rem;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .brand-card-item:hover .brand-logo-icon-wrap {
+            transform: scale(1.12);
+        }
+
+        .brand-card-name {
+            font-weight: 800;
+            font-size: 0.92rem;
+            margin-bottom: 0.2rem;
+            letter-spacing: -0.2px;
+            text-align: center;
+            color: #0f172a;
+        }
+
+        .brand-card-tagline {
+            font-size: 0.72rem;
+            color: #64748b;
+            text-align: center;
+            line-height: 1.25;
+            transition: color 0.2s ease;
+        }
+
+        .brand-card-item:hover .brand-card-tagline {
+            color: #334155;
+        }
+
+        .brand-scroll-track {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            padding-top: 0.25rem;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .brand-scroll-track::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .brand-scroll-track::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .brand-scroll-track::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .brand-scroll-track::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .brand-col-card {
+            flex: 0 0 170px;
+            scroll-snap-align: start;
+        }
+
+        @media (min-width: 992px) {
+            .brand-scroll-track {
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                overflow-x: visible;
+                padding-bottom: 0;
+            }
+            .brand-col-card {
+                flex: none;
+                width: 100%;
+            }
+        }
+
+        /* Floating AI Tech Matcher Button */
+        .floating-ai-matcher-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 1040;
+            background: linear-gradient(135deg, #ff9f00 0%, #fb641b 100%);
+            border: 2px solid #ffffff !important;
+            box-shadow: 0 8px 25px rgba(251, 100, 27, 0.45);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: pulseFloatingBtn 3s infinite;
+        }
+
+        .floating-ai-matcher-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(251, 100, 27, 0.65);
+            color: #111 !important;
+        }
+
+        @keyframes pulseFloatingBtn {
+            0%, 100% { box-shadow: 0 8px 22px rgba(251, 100, 27, 0.4); }
+            50% { box-shadow: 0 12px 30px rgba(251, 100, 27, 0.7); }
+        }
+
+        /* Wizard Option Cards (Step 1) */
+        .wizard-option-card {
+            border: 2px solid #e2e8f0;
+            background: #ffffff;
+            border-radius: 1rem;
+            padding: 1.15rem 1rem;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wizard-option-card:hover {
+            border-color: #93c5fd;
+            background: #f8fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+        }
+
+        .wizard-option-card.selected {
+            border-color: #2563eb !important;
+            background: #eff6ff !important;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+        }
+
+        .wizard-option-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            background: #f1f5f9;
+            transition: transform 0.25s ease;
+        }
+
+        .wizard-option-card.selected .wizard-option-icon {
+            background: #dbeafe;
+            transform: scale(1.1);
+        }
+
+        /* Budget Chips (Step 2) */
+        .wizard-budget-chip {
+            border: 2px solid #e2e8f0;
+            background: #ffffff;
+            border-radius: 1rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            height: 100%;
+        }
+
+        .wizard-budget-chip:hover {
+            border-color: #93c5fd;
+            background: #f8fafc;
+        }
+
+        .wizard-budget-chip.selected {
+            border-color: #2563eb !important;
+            background: #eff6ff !important;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+    </style>
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
-    <!-- Header / Navbar -->
-    <header class="sticky-top">
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-glass py-3">
-            <div class="container">
-                <!-- Brand Logo -->
-                <a class="navbar-brand d-flex align-items-center gap-2 text-white" href="{% url 'home' %}">
-                    <span class="brand-badge"><i class="bi bi-lightning-charge-fill"></i> FRICA</span>
-                    <span class="fw-bold tracking-tight text-white d-none d-sm-inline">Rental App</span>
-                </a>
+    <!-- ================= 1. PRIMARY AMAZON / FLIPKART HEADER ================= -->
+    <header class="sticky-top z-3">
+        <nav class="navbar navbar-fk-main">
+            <div class="container-fluid px-lg-4">
+                <div class="d-flex align-items-center justify-content-between w-100 gap-3">
+                    <!-- Brand Logo & Amazon/Flipkart Location Widget -->
+                    <div class="d-flex align-items-center gap-3">
+                        <a class="text-decoration-none d-flex flex-column align-items-start" href="{% url 'home' %}">
+                            <div class="brand-badge-glow">
+                                <i class="bi bi-lightning-charge-fill text-warning fs-5"></i>
+                                <span>FRICA</span>
+                                <span class="badge bg-warning text-dark ms-1 py-1 px-2 rounded-pill fw-bold" style="font-size: 0.62rem; letter-spacing: 0.5px;">GADGET HUB</span>
+                            </div>
+                            <span class="brand-tagline mt-1">Rent Premium Tech. Zero Deposite. Pure Performance.</span>
+                        </a>
 
-                <!-- Mobile Toggle -->
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                        <!-- Amazon / Flipkart Style Location Selector Button -->
+                        <button type="button" class="btn btn-link text-decoration-none text-white p-1 d-none d-lg-flex align-items-center gap-2 flica-location-btn" data-bs-toggle="modal" data-bs-target="#deliveryLocationModal" title="Change Delivery Location">
+                            <i class="bi bi-geo-alt-fill text-warning fs-5"></i>
+                            <div class="lh-1 text-start">
+                                <div class="text-white-50" style="font-size: 0.68rem; letter-spacing: 0.2px;">Deliver to</div>
+                                <div class="fw-bold text-white text-truncate" id="navDeliveryLocation" style="max-width: 140px; font-size: 0.82rem;">Select Location</div>
+                            </div>
+                        </button>
+                    </div>
 
-                <!-- Navigation Links & Actions -->
-                <div class="collapse navbar-collapse" id="navbarMain">
-                    <!-- Quick Categories -->
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
-                        <li class="nav-item">
-                            <a class="nav-link text-white-50 {% if request.path == '/' and not request.GET.category %}active text-white fw-semibold{% endif %}" href="{% url 'home' %}">
-                                <i class="bi bi-grid-fill me-1"></i> All Gadgets
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white-50 {% if request.GET.category == 'Mobiles' %}active text-white fw-semibold{% endif %}" href="{% url 'home' %}?category=Mobiles">Mobiles</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white-50 {% if request.GET.category == 'Laptop' %}active text-white fw-semibold{% endif %}" href="{% url 'home' %}?category=Laptop">Laptops</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white-50 {% if request.GET.category == 'Camera' %}active text-white fw-semibold{% endif %}" href="{% url 'home' %}?category=Camera">Cameras</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white-50 {% if request.GET.category == 'TV' %}active text-white fw-semibold{% endif %}" href="{% url 'home' %}?category=TV">TV</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white-50 {% if request.GET.category == 'Watches' %}active text-white fw-semibold{% endif %}" href="{% url 'home' %}?category=Watches">Watches</a>
-                        </li>
-                    </ul>
-
-                    <!-- Search Form -->
-                    <form class="d-flex me-lg-3 my-2 my-lg-0" action="{% url 'home' %}" method="GET">
-                        {% if request.GET.category %}
-                            <input type="hidden" name="category" value="{{ request.GET.category }}">
-                        {% endif %}
-                        <div class="input-group input-group-sm">
-                            <input class="form-control bg-dark text-white border-secondary" type="search" name="q" placeholder="Search gadgets..." value="{{ request.GET.q|default:'' }}" aria-label="Search">
-                            <button class="btn btn-outline-light border-secondary" type="submit">
+                    <!-- Global Search Bar with Category Select -->
+                    <div class="fk-search-wrap d-none d-md-block mx-2">
+                        <form action="{% url 'home' %}" method="GET" class="d-flex fk-search-group">
+                            <select name="category" class="fk-cat-select" aria-label="Select Category">
+                                <option value="All" {% if not current_category or current_category == 'All' %}selected{% endif %}>All Electronics</option>
+                                <option value="Mobiles" {% if current_category == 'Mobiles' %}selected{% endif %}>📱 Mobiles</option>
+                                <option value="Laptop" {% if current_category == 'Laptop' %}selected{% endif %}>💻 Laptops</option>
+                                <option value="TV" {% if current_category == 'TV' %}selected{% endif %}>📺 Smart TVs</option>
+                                <option value="Camera" {% if current_category == 'Camera' %}selected{% endif %}>📷 Cameras</option>
+                                <option value="Audio" {% if current_category == 'Audio' %}selected{% endif %}>🎧 Audio</option>
+                                <option value="Watches" {% if current_category == 'Watches' %}selected{% endif %}>⌚ Watches</option>
+                                <option value="Computers" {% if current_category == 'Computers' %}selected{% endif %}>🖥️ Gaming PCs</option>
+                            </select>
+                            <input class="form-control fk-search-input" type="search" name="q" placeholder="Search for electronic gadgets, brands, flagship 4K TVs, iPhones, cameras..." value="{{ search_query|default:'' }}">
+                            <button class="btn fk-search-btn" type="submit" title="Search Gadgets">
                                 <i class="bi bi-search"></i>
                             </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
 
-                    <!-- Cart & User Auth Controls -->
-                    <div class="d-flex align-items-center gap-3">
-                        <!-- Cart Icon -->
-                        <a href="{% url 'cart_view' %}" class="btn btn-outline-light btn-sm position-relative rounded-pill px-3 py-1">
-                            <i class="bi bi-bag-check me-1"></i> Cart
+                    <!-- Right Controls: Staff Admin, Wishlist, Cart, User Profile / Auth -->
+                    <div class="d-flex align-items-center gap-2 gap-md-3">
+                        <!-- Admin Console Quick Badge (for staff) -->
+                        {% if user.is_authenticated and user.is_staff %}
+                            <a href="{% url 'admin_dashboard_view' %}" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark px-3 py-1 shadow-sm d-flex align-items-center gap-1">
+                                <i class="bi bi-shield-check"></i>
+                                <span class="d-none d-lg-inline">Staff Portal</span>
+                            </a>
+                        {% endif %}
+
+                        <!-- Wishlist Header Button -->
+                        <a href="{% url 'wishlist_page_view' %}" class="fk-wishlist-btn position-relative" title="Saved Wishlist Items">
+                            <i class="bi bi-heart-fill fs-5 text-danger"></i>
+                            <span class="d-none d-sm-inline">Wishlist</span>
+                            <span id="navWishlistBadge" class="badge rounded-pill bg-warning text-dark {% if wishlist_count == 0 %}d-none{% endif %}" style="font-size: 0.72rem;">
+                                {{ wishlist_count }}
+                            </span>
+                        </a>
+
+                        <!-- Shopping Cart -->
+                        <a href="{% url 'cart_view' %}" class="fk-cart-btn position-relative" title="Shopping Cart">
+                            <i class="bi bi-cart3 fs-5"></i>
+                            <span class="d-none d-sm-inline">Cart</span>
                             {% if cart_count > 0 %}
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                <span class="badge rounded-pill bg-danger" style="font-size: 0.72rem;">
                                     {{ cart_count }}
-                                    <span class="visually-hidden">items in cart</span>
                                 </span>
                             {% endif %}
                         </a>
 
+                        <!-- User Authentication Dropdown / Login -->
                         {% if user.is_authenticated %}
                             <div class="dropdown">
-                                <button class="btn btn-primary btn-sm rounded-pill dropdown-toggle d-flex align-items-center gap-2 px-3 py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-person-circle"></i>
-                                    <span>{{ user.first_name|default:user.username }}</span>
+                                <button class="btn btn-outline-light btn-sm rounded-pill dropdown-toggle d-flex align-items-center gap-1 px-3 py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle fs-6"></i>
+                                    <span class="fw-semibold">{{ user.first_name|default:user.username }}</span>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
-                                    <li><h6 class="dropdown-header text-muted">Signed in as <strong>{{ user.username }}</strong></h6></li>
-                                    <li><a class="dropdown-item py-2" href="{% url 'user_details' %}"><i class="bi bi-person-circle me-2 text-info"></i> My Profile &amp; KYC</a></li>
-                                    <li><a class="dropdown-item py-2" href="{% url 'user_dashboard' %}"><i class="bi bi-clock-history me-2 text-primary"></i> My Rentals &amp; Orders</a></li>
-                                    {% if user.is_staff %}
-                                        <li><a class="dropdown-item py-2" href="/admin/" target="_blank"><i class="bi bi-shield-lock me-2 text-warning"></i> Admin Panel</a></li>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 py-2">
+                                    {% if user.is_staff or user.is_superuser %}
+                                        <li><h6 class="dropdown-header text-warning fw-bold"><i class="bi bi-shield-lock-fill me-1"></i> Staff Administrator</h6></li>
+                                        <li><a class="dropdown-item py-2 fw-semibold" href="{% url 'admin_dashboard_view' %}"><i class="bi bi-speedometer2 me-2 text-warning"></i> Admin Dashboard</a></li>
+                                        <li><a class="dropdown-item py-2" href="/admin/" target="_blank"><i class="bi bi-database-gear me-2 text-secondary"></i> Django Admin</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item py-2" href="{% url 'wishlist_page_view' %}"><i class="bi bi-heart-fill me-2 text-danger"></i> My Wishlist</a></li>
+                                        <li><a class="dropdown-item py-2" href="{% url 'user_details' %}"><i class="bi bi-person-circle me-2 text-info"></i> My Profile &amp; KYC</a></li>
+                                        <li><a class="dropdown-item py-2" href="{% url 'user_dashboard' %}"><i class="bi bi-clock-history me-2 text-primary"></i> My Rentals</a></li>
+                                    {% else %}
+                                        <li><h6 class="dropdown-header text-muted">Signed in as <strong>{{ user.username }}</strong></h6></li>
+                                        <li><a class="dropdown-item py-2" href="{% url 'wishlist_page_view' %}"><i class="bi bi-heart-fill me-2 text-danger"></i> My Wishlist</a></li>
+                                        <li><a class="dropdown-item py-2" href="{% url 'user_details' %}"><i class="bi bi-person-circle me-2 text-info"></i> My Profile &amp; KYC</a></li>
+                                        <li><a class="dropdown-item py-2" href="{% url 'user_dashboard' %}"><i class="bi bi-clock-history me-2 text-primary"></i> My Rentals &amp; History</a></li>
                                     {% endif %}
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item py-2 text-danger" href="{% url 'usrlogout' %}"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
+                                    <li><a class="dropdown-item py-2 text-danger" href="{% url 'usrlogout' %}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
                                 </ul>
                             </div>
                         {% else %}
-                            <div class="d-flex align-items-center gap-2">
-                                <a href="{% url 'usrlogin' %}" class="btn btn-outline-light btn-sm rounded-pill px-3">Log In</a>
-                                <a href="{% url 'usrregister' %}" class="btn btn-primary btn-sm rounded-pill px-3">Sign Up</a>
-                            </div>
+                            <a href="{% url 'usrlogin' %}" class="btn fk-login-btn">Login</a>
                         {% endif %}
                     </div>
                 </div>
+
+                <!-- Mobile Location Bar (Visible on mobile/tablet screens) -->
+                <div class="d-lg-none w-100 pt-2 pb-1 d-flex align-items-center justify-content-between text-white" style="border-top: 1px solid rgba(255,255,255,0.15); font-size: 0.8rem;">
+                    <button type="button" class="btn btn-link text-white text-decoration-none p-0 d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#deliveryLocationModal" title="Select Delivery Location">
+                        <i class="bi bi-geo-alt-fill text-warning"></i>
+                        <span class="text-white-50">Deliver to:</span>
+                        <strong class="text-white text-truncate" id="mobileNavDeliveryLocation" style="max-width: 170px;">Kochi 682001</strong>
+                        <i class="bi bi-chevron-down text-white-50 ms-1" style="font-size: 0.65rem;"></i>
+                    </button>
+                    <span class="badge bg-warning text-dark fw-bold" style="font-size: 0.65rem;"><i class="bi bi-crosshair me-1"></i>GPS Ready</span>
+                </div>
+
+                <!-- Mobile Search Bar (Visible only on small screens) -->
+                <div class="d-md-none w-100 mt-2">
+                    <form action="{% url 'home' %}" method="GET" class="d-flex fk-search-group">
+                        <input class="form-control fk-search-input" type="search" name="q" placeholder="Search gadgets..." value="{{ search_query|default:'' }}">
+                        <button class="btn fk-search-btn" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </nav>
+
+        <!-- ================= 2. CATEGORY RIBBON SUB-NAVBAR ================= -->
+        <div class="fk-category-bar">
+            <div class="container-fluid px-lg-4 d-flex justify-content-start justify-content-md-center">
+                <a href="{% url 'home' %}" class="fk-cat-item {% if not current_category or current_category == 'All' %}active{% endif %}">
+                    <span class="fk-cat-icon"><i class="bi bi-grid-fill text-primary"></i></span>
+                    <span>All Gadgets</span>
+                </a>
+                <a href="{% url 'category' 'Mobiles' %}" class="fk-cat-item {% if current_category == 'Mobiles' %}active{% endif %}">
+                    <span class="fk-cat-icon"><i class="bi bi-phone-fill text-danger"></i></span>
+                    <span>Mobiles &amp; 5G</span>
+                </a>
+                <a href="{% url 'category' 'Laptop' %}" class="fk-cat-item {% if current_category == 'Laptop' %}active{% endif %}">
+                    <span class="fk-cat-icon"><i class="bi bi-laptop text-info"></i></span>
+                    <span>Laptops &amp; Macs</span>
+                </a>
+                <a href="{% url 'category' 'TV' %}" class="fk-cat-item {% if current_category == 'TV' %}active{% endif %}">
+                    <span class="fk-cat-icon"><i class="bi bi-tv-fill text-warning"></i></span>
+                    <span>Smart TVs</span>
+                </a>
+                <a href="{% url 'category' 'Camera' %}" class="fk-cat-item {% if current_category == 'Camera' %}active{% endif %}">
+                    <span class="fk-cat-icon"><i class="bi bi-camera-fill text-success"></i></span>
+                    <span>Cameras &amp; Cine</span>
+                </a>
+                <a href="{% url 'category' 'Audio' %}" class="fk-cat-item {% if current_category == 'Audio' %}active{% endif %}">
+                    <span class="fk-cat-icon"><i class="bi bi-speaker-fill text-purple" style="color: #8b5cf6;"></i></span>
+                    <span>Audio &amp; Theatres</span>
+                </a>
+                <a href="{% url 'category' 'Watches' %}" class="fk-cat-item {% if current_category == 'Watches' %}active{% endif %}">
+                    <span class="fk-cat-icon"><i class="bi bi-smartwatch text-primary"></i></span>
+                    <span>Watches</span>
+                </a>
+                <a href="{% url 'category' 'Computers' %}" class="fk-cat-item {% if current_category == 'Computers' %}active{% endif %}">
+                    <span class="fk-cat-icon"><i class="bi bi-pc-display text-secondary"></i></span>
+                    <span>Gaming PCs</span>
+                </a>
+            </div>
+        </div>
     </header>
 
     <!-- Global Alert Messages -->
-    <div class="container mt-3">
+    <div class="container-fluid px-lg-4 mt-3">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm border-0 d-flex align-items-center gap-2" role="alert">
+                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm border-0 d-flex align-items-center gap-2 rounded-3" role="alert">
                     {% if message.tags == 'success' %}
                         <i class="bi bi-check-circle-fill text-success fs-5"></i>
                     {% elif message.tags == 'danger' or message.tags == 'error' %}
@@ -142,65 +968,65 @@
     </div>
 
     <!-- Main Content Block -->
-    <main class="py-4">
+    <main class="py-2 flex-grow-1">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white pt-5 pb-4 mt-auto border-top border-secondary border-opacity-25">
-        <div class="container">
+    <!-- ================= 3. PRODUCTION FOOTER (Flipkart/Amazon style) ================= -->
+    <footer class="bg-dark text-white pt-5 pb-4 mt-auto border-top border-secondary border-opacity-25" style="background-color: #172337 !important;">
+        <div class="container-fluid px-lg-5">
             <div class="row g-4 mb-4">
-                <div class="col-lg-4 col-md-6">
+                <!-- Col 1: About -->
+                <div class="col-lg-3 col-md-6">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <span class="brand-badge"><i class="bi bi-lightning-charge-fill"></i> FRICA</span>
-                        <span class="fw-bold fs-5">Rental App</span>
+                        <span class="brand-logo-text fs-4 text-white"><i class="bi bi-lightning-charge-fill text-warning"></i> FRICA</span>
+                        <span class="badge bg-primary text-uppercase px-2 py-1">Rent Hub</span>
                     </div>
                     <p class="text-white-50 small mb-3">
-                        FRICA is India's leading on-demand electronic gadget rental ecosystem. Rent flagship smartphones, laptops, mirrorless cameras, and smartwatches with zero security deposit options and doorstep delivery.
+                        FRICA is India's premier gadget rental destination. Experience flagship iPhones, Sony OLEDs, Alienware gaming rigs, and Cine cameras with Zero Security Deposit.
                     </p>
-                    <div class="d-flex gap-3 text-white-50">
-                        <span class="badge bg-secondary bg-opacity-25 text-white-50 py-2 px-3 border border-secondary border-opacity-25"><i class="bi bi-shield-check text-success me-1"></i> 100% Insured</span>
-                        <span class="badge bg-secondary bg-opacity-25 text-white-50 py-2 px-3 border border-secondary border-opacity-25"><i class="bi bi-truck text-info me-1"></i> Express Delivery</span>
+                    <div class="d-flex flex-wrap gap-2 text-white-50">
+                        <span class="badge bg-secondary bg-opacity-25 text-white-50 py-2 px-3 border border-secondary border-opacity-25"><i class="bi bi-shield-check text-success me-1"></i> Zero Deposit</span>
+                        <span class="badge bg-secondary bg-opacity-25 text-white-50 py-2 px-3 border border-secondary border-opacity-25"><i class="bi bi-truck text-warning me-1"></i> Express Dispatch</span>
                     </div>
                 </div>
 
-                <div class="col-lg-2 col-md-3 col-6">
-                    <h6 class="fw-bold text-white mb-3 text-uppercase fs-7 tracking-wider">Categories</h6>
+                <!-- Col 2: Categories -->
+                <div class="col-lg-3 col-md-6 col-6">
+                    <h6 class="fw-bold text-white mb-3 text-uppercase fs-7 tracking-wider text-muted">Electronic Categories</h6>
                     <ul class="list-unstyled text-white-50 small d-flex flex-column gap-2">
-                        <li><a href="{% url 'home' %}?category=Mobiles" class="text-white-50 text-decoration-none hover-white">Smartphones</a></li>
-                        <li><a href="{% url 'home' %}?category=Laptop" class="text-white-50 text-decoration-none">Gaming Laptops</a></li>
-                        <li><a href="{% url 'home' %}?category=Camera" class="text-white-50 text-decoration-none">DSLR & Mirrorless</a></li>
-                        <li><a href="{% url 'home' %}?category=TV" class="text-white-50 text-decoration-none">Smart TVs</a></li>
-                        <li><a href="{% url 'home' %}?category=Watches" class="text-white-50 text-decoration-none">Smartwatches</a></li>
+                        <li><a href="{% url 'category' 'Mobiles' %}" class="text-white-50 text-decoration-none hover-white">Smartphones (iPhone 18, Vivo, Galaxy)</a></li>
+                        <li><a href="{% url 'category' 'Laptop' %}" class="text-white-50 text-decoration-none">MacBook Pro &amp; RTX Laptops</a></li>
+                        <li><a href="{% url 'category' 'TV' %}" class="text-white-50 text-decoration-none">Smart TVs (Sony, LG OLED, Samsung 8K)</a></li>
+                        <li><a href="{% url 'category' 'Camera' %}" class="text-white-50 text-decoration-none">Cameras &amp; Cine (Sony FX3, Canon R5 II)</a></li>
+                        <li><a href="{% url 'category' 'Audio' %}" class="text-white-50 text-decoration-none">PartyBox &amp; Dolby Atmos Theatres</a></li>
+                        <li><a href="{% url 'category' 'Watches' %}" class="text-white-50 text-decoration-none">Watches (Apple Ultra, Garmin, G-Shock)</a></li>
                     </ul>
                 </div>
 
-                <div class="col-lg-2 col-md-3 col-6">
-                    <h6 class="fw-bold text-white mb-3 text-uppercase fs-7 tracking-wider">Quick Links</h6>
+                <!-- Col 3: Customer Links -->
+                <div class="col-lg-2 col-md-6 col-6">
+                    <h6 class="fw-bold text-white mb-3 text-uppercase fs-7 tracking-wider text-muted">Customer Care</h6>
                     <ul class="list-unstyled text-white-50 small d-flex flex-column gap-2">
-                        <li><a href="{% url 'home' %}" class="text-white-50 text-decoration-none">Catalog</a></li>
-                        <li><a href="{% url 'cart_view' %}" class="text-white-50 text-decoration-none">Cart Breakdown</a></li>
-                        <li><a href="{% url 'user_dashboard' %}" class="text-white-50 text-decoration-none">Track Rentals</a></li>
-                        <li><a href="/admin/" class="text-white-50 text-decoration-none">Admin Console</a></li>
+                        <li><a href="{% url 'home' %}" class="text-white-50 text-decoration-none">Browse Catalog</a></li>
+                        <li><a href="{% url 'cart_view' %}" class="text-white-50 text-decoration-none">Shopping Cart</a></li>
+                        <li><a href="{% url 'user_dashboard' %}" class="text-white-50 text-decoration-none">My Rentals &amp; Extensions</a></li>
+                        <li><a href="{% url 'user_details' %}" class="text-white-50 text-decoration-none">Digital KYC Verification</a></li>
+                        <li><a href="{% url 'admin_login_view' %}" class="text-warning text-decoration-none"><i class="bi bi-shield-lock me-1"></i> Staff Portal</a></li>
                     </ul>
                 </div>
 
-                <div class="col-lg-4 col-md-12">
-                    <h6 class="fw-bold text-white mb-3 text-uppercase fs-7 tracking-wider">Why Rent With FRICA?</h6>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <div class="p-2 rounded bg-secondary bg-opacity-25 small text-white-50 border border-secondary border-opacity-25">
-                                <i class="bi bi-cash-stack text-warning d-block mb-1 fs-5"></i>
-                                <span class="fw-semibold text-white d-block">Zero Deposit</span>
-                                <span>Save your capital</span>
-                            </div>
+                <!-- Col 4: FRICA Trust & Policy -->
+                <div class="col-lg-4 col-md-6">
+                    <h6 class="fw-bold text-white mb-3 text-uppercase fs-7 tracking-wider text-muted">Rental Assurance</h6>
+                    <div class="p-3 rounded-3 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 small text-white-50">
+                        <div class="d-flex align-items-center gap-2 text-white mb-2">
+                            <i class="bi bi-patch-check-fill text-success fs-5"></i>
+                            <span class="fw-bold">100% Insured Under FRICA Care</span>
                         </div>
-                        <div class="col-6">
-                            <div class="p-2 rounded bg-secondary bg-opacity-25 small text-white-50 border border-secondary border-opacity-25">
-                                <i class="bi bi-clock-history text-info d-block mb-1 fs-5"></i>
-                                <span class="fw-semibold text-white d-block">Flexible Tenures</span>
-                                <span>Daily & weekly options</span>
-                            </div>
+                        <p class="mb-2">Every gadget is inspected, sanitized, and insured against minor transit wear. Rent with full peace of mind.</p>
+                        <div class="text-white-50 small">
+                            <i class="bi bi-credit-card-2-front me-1 text-info"></i> UPI, Net Banking, Credit/Debit Cards, Cash On Delivery
                         </div>
                     </div>
                 </div>
@@ -209,18 +1035,900 @@
             <hr class="border-secondary border-opacity-25 my-3">
 
             <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center text-white-50 small pt-2">
-                <div>&copy; {% now "Y" %} FRICA Rental App. All rights reserved.</div>
+                <div>&copy; {% now "Y" %} FRICA Online Rentals (India) Private Limited. All rights reserved. &bull; <a href="{% url 'admin_login_view' %}" class="text-white-50 text-decoration-none ms-1"><i class="bi bi-shield-lock me-1"></i>Staff Portal</a></div>
                 <div class="mt-2 mt-sm-0">
-                    Developed with <span class="text-danger">&hearts;</span> using <strong class="text-white">Python 3 & Django MVT</strong>
+                    Engineered with <span class="text-danger">&hearts;</span> &bull; <strong class="text-white">Python 3 &amp; Django MVT</strong>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- ================= DELIVERY LOCATION SELECTOR MODAL (AMAZON/FLIPKART STYLE) ================= -->
+    <div class="modal fade" id="deliveryLocationModal" tabindex="-1" aria-labelledby="deliveryLocationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header text-white p-3 px-4" style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);">
+                    <div>
+                        <h6 class="modal-title fw-bold text-white mb-0" id="deliveryLocationModalLabel">
+                            <i class="bi bi-geo-alt-fill text-warning me-1"></i> Choose your delivery location
+                        </h6>
+                        <small class="text-white-50" style="font-size: 0.75rem;">Delivery options and gadget dispatch speeds vary by city</small>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <!-- Current Active Location Banner -->
+                    <div class="d-flex align-items-center justify-content-between p-2 px-3 bg-white border rounded-3 mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                            <div>
+                                <small class="text-muted d-block" style="font-size: 0.72rem;">Current Delivery Pin</small>
+                                <strong class="text-dark" id="modalActiveLocationText">Kochi, 682001</strong>
+                            </div>
+                        </div>
+                        <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1" style="font-size: 0.7rem;">Active</span>
+                    </div>
+
+                    <!-- Auto-detect via Geolocation Button -->
+                    <div class="d-grid mb-3">
+                        <button type="button" id="btnAutoDetectLocation" class="btn btn-outline-primary fw-bold py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 shadow-xs">
+                            <i class="bi bi-crosshair fs-5 text-primary" id="geoCrosshairIcon"></i>
+                            <div class="spinner-border spinner-border-sm text-primary d-none" id="geoSpinner" role="status"></div>
+                            <span class="btn-text">Use Current Location / Detect GPS</span>
+                        </button>
+                    </div>
+
+                    <div class="position-relative text-center my-3">
+                        <hr class="text-secondary opacity-25">
+                        <span class="position-absolute top-50 start-50 translate-middle bg-light px-3 text-muted small fw-semibold">or enter an Indian pincode</span>
+                    </div>
+
+                    <!-- Manual Pincode Input -->
+                    <form id="formPincode" class="mb-3" onsubmit="event.preventDefault(); window.applyPincode();">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-pin-map-fill text-primary"></i></span>
+                            <input type="text" id="inputPincode" class="form-control border-start-0" placeholder="Enter 6-digit pincode (e.g. 682001)" maxlength="6" pattern="\d{6}">
+                            <button class="btn btn-primary fw-bold px-3" type="submit" id="btnApplyPincode">Apply</button>
+                        </div>
+                        <div id="pincodeFeedback" class="small mt-1 text-danger d-none"></div>
+                    </form>
+
+                    <!-- Popular Tech Hubs Quick Select -->
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <small class="fw-bold text-uppercase text-muted" style="font-size: 0.72rem;">Popular Delivery Tech Hubs</small>
+                            <small class="text-primary fw-semibold" style="font-size: 0.7rem;">Kerala &amp; Metros</small>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2" id="quickCityPills">
+                            <button type="button" class="btn btn-sm btn-white bg-white border rounded-pill px-3 py-1 fw-semibold city-pill" data-city="Alappuzha" data-pincode="688001">📍 Alappuzha (688001)</button>
+                            <button type="button" class="btn btn-sm btn-white bg-white border rounded-pill px-3 py-1 fw-semibold city-pill" data-city="Kochi" data-pincode="682001">📍 Kochi (682001)</button>
+                            <button type="button" class="btn btn-sm btn-white bg-white border rounded-pill px-3 py-1 fw-semibold city-pill" data-city="Trivandrum" data-pincode="695001">📍 Trivandrum (695001)</button>
+                            <button type="button" class="btn btn-sm btn-white bg-white border rounded-pill px-3 py-1 fw-semibold city-pill" data-city="Kozhikode" data-pincode="673001">📍 Kozhikode (673001)</button>
+                            <button type="button" class="btn btn-sm btn-white bg-white border rounded-pill px-3 py-1 fw-semibold city-pill" data-city="Kollam" data-pincode="691001">📍 Kollam (691001)</button>
+                            <button type="button" class="btn btn-sm btn-white bg-white border rounded-pill px-3 py-1 fw-semibold city-pill" data-city="Kottayam" data-pincode="686001">📍 Kottayam (686001)</button>
+                            <button type="button" class="btn btn-sm btn-white bg-white border rounded-pill px-3 py-1 fw-semibold city-pill" data-city="Bangalore" data-pincode="560001">📍 Bangalore (560001)</button>
+                            <button type="button" class="btn btn-sm btn-white bg-white border rounded-pill px-3 py-1 fw-semibold city-pill" data-city="Chennai" data-pincode="600001">📍 Chennai (600001)</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-white border-top py-2 px-4 justify-content-between">
+                    <small class="text-muted"><i class="bi bi-truck text-success me-1"></i>Free doorstep handover on all verified locations</small>
+                    <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating AI Tech Matcher CTA Button -->
+    <button type="button" class="btn btn-warning rounded-pill shadow-lg floating-ai-matcher-btn d-flex align-items-center gap-2 px-3 py-2 fw-bold text-dark" data-bs-toggle="modal" data-bs-target="#aiTechMatcherModal" title="Find Your Ideal Gadget in 10s">
+        <span class="fs-5">✨</span>
+        <span class="d-none d-sm-inline">AI Tech Matcher</span>
+        <span class="badge bg-danger text-white rounded-pill px-2 py-1 small" style="font-size: 0.65rem;">10s Quiz</span>
+    </button>
+
+    <!-- ================= AI SMART TECH MATCHER MODAL (RECOMMENDATION WIZARD) ================= -->
+    <div class="modal fade" id="aiTechMatcherModal" tabindex="-1" aria-labelledby="aiTechMatcherModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-2xl rounded-4 overflow-hidden">
+                <!-- Header -->
+                <div class="modal-header text-white p-3 px-4 position-relative" style="background: linear-gradient(135deg, #0b192c 0%, #1e3a8a 60%, #312e81 100%);">
+                    <div>
+                        <div class="d-inline-flex align-items-center gap-1 badge bg-warning text-dark fw-bold px-2 py-1 rounded-pill mb-1 small">
+                            <i class="bi bi-stars"></i> INDUSTRY-FIRST AI CURATOR
+                        </div>
+                        <h5 class="modal-title fw-bold text-white mb-0" id="aiTechMatcherModalLabel">
+                            ✨ AI Tech Matcher &mdash; Find Your Ideal Gadget Kit
+                        </h5>
+                        <small class="text-white-50" style="font-size: 0.76rem;">Interactive recommendation wizard tailored to your usage &amp; daily budget</small>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Wizard Progress Indicator -->
+                <div class="px-4 pt-3 pb-2 bg-light border-bottom">
+                    <div class="d-flex align-items-center justify-content-between text-center small fw-bold">
+                        <div class="d-flex align-items-center gap-2 wizard-step-tab active text-primary" id="stepIndicator1">
+                            <span class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 0.75rem;">1</span>
+                            <span>Purpose</span>
+                        </div>
+                        <div class="flex-grow-1 mx-3 border-top border-2" id="stepLine1"></div>
+                        <div class="d-flex align-items-center gap-2 wizard-step-tab text-muted" id="stepIndicator2">
+                            <span class="rounded-circle bg-secondary bg-opacity-25 text-muted d-inline-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 0.75rem;">2</span>
+                            <span>Budget &amp; Days</span>
+                        </div>
+                        <div class="flex-grow-1 mx-3 border-top border-2" id="stepLine2"></div>
+                        <div class="d-flex align-items-center gap-2 wizard-step-tab text-muted" id="stepIndicator3">
+                            <span class="rounded-circle bg-secondary bg-opacity-25 text-muted d-inline-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 0.75rem;">3</span>
+                            <span>Curated Kit</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wizard Body -->
+                <div class="modal-body p-4 bg-light">
+                    <!-- STEP 1: PURPOSE -->
+                    <div id="wizardStep1" class="wizard-pane">
+                        <h6 class="fw-bold text-dark mb-1">Step 1: What's your plan or primary goal?</h6>
+                        <p class="text-muted small mb-3">Choose the scenario you need electronics for:</p>
+
+                        <div class="row g-2">
+                            <div class="col-12 col-md-6">
+                                <div class="wizard-option-card selected" data-purpose="gaming">
+                                    <div class="wizard-option-icon">🎮</div>
+                                    <div>
+                                        <div class="fw-bold text-dark">Weekend Gaming</div>
+                                        <small class="text-muted d-block" style="font-size: 0.75rem;">High-FPS RTX rigs, TUF/Victus, esports tournaments</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="wizard-option-card" data-purpose="photography">
+                                    <div class="wizard-option-icon">📸</div>
+                                    <div>
+                                        <div class="fw-bold text-dark">Photography &amp; Vlogging</div>
+                                        <small class="text-muted d-block" style="font-size: 0.75rem;">Sony/Canon Cine cameras, 4K/8K RAW, weddings &amp; reels</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="wizard-option-card" data-purpose="coding">
+                                    <div class="wizard-option-icon">💼</div>
+                                    <div>
+                                        <div class="fw-bold text-dark">Coding / Office Dev</div>
+                                        <small class="text-muted d-block" style="font-size: 0.75rem;">M-Series MacBooks, compilation beasts, multitasking</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="wizard-option-card" data-purpose="movie">
+                                    <div class="wizard-option-icon">🎬</div>
+                                    <div>
+                                        <div class="fw-bold text-dark">Movie &amp; Match Night</div>
+                                        <small class="text-muted d-block" style="font-size: 0.75rem;">4K/8K OLED TVs, Dolby Atmos, live sports watch parties</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="wizard-option-card" data-purpose="travel">
+                                    <div class="wizard-option-icon">✈️</div>
+                                    <div>
+                                        <div class="fw-bold text-dark">Travel &amp; Roadtrip</div>
+                                        <small class="text-muted d-block" style="font-size: 0.75rem;">Flagship zoom phones, smartwatches, GPS tracking &amp; vacation kits</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-end mt-4">
+                            <button type="button" class="btn btn-primary fw-bold px-4 py-2 rounded-pill shadow-xs" id="btnNextToStep2">
+                                Continue to Budget <i class="bi bi-arrow-right ms-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: BUDGET & DURATION -->
+                    <div id="wizardStep2" class="wizard-pane d-none">
+                        <h6 class="fw-bold text-dark mb-1">Step 2: What is your preferred daily budget?</h6>
+                        <p class="text-muted small mb-3">Our AI will scan all 80+ inventory gadgets matching your price point:</p>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-4">
+                                <div class="wizard-budget-chip" data-budget="low">
+                                    <div class="fs-4 mb-1">🟢</div>
+                                    <div class="fw-bold text-dark small">Under ₹499</div>
+                                    <small class="text-muted" style="font-size: 0.7rem;">Smart Budget</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="wizard-budget-chip selected" data-budget="mid">
+                                    <div class="fs-4 mb-1">🟡</div>
+                                    <div class="fw-bold text-dark small">₹500 - ₹1,500</div>
+                                    <small class="text-primary fw-bold" style="font-size: 0.7rem;">Most Popular</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="wizard-budget-chip" data-budget="premium">
+                                    <div class="fs-4 mb-1">🟣</div>
+                                    <div class="fw-bold text-dark small">Premium / No Limit</div>
+                                    <small class="text-muted" style="font-size: 0.7rem;">Top Flagships</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-white rounded-3 border mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label mb-0 small fw-bold text-dark">
+                                    <i class="bi bi-calendar2-week me-1 text-primary"></i> Expected Rental Days:
+                                </label>
+                                <span class="badge bg-primary text-white fw-bold" id="wizardDaysDisplay">3 Days</span>
+                            </div>
+                            <input type="range" class="form-range" min="1" max="30" value="3" id="wizardDaysSlider">
+                            <div class="d-flex justify-content-between text-muted" style="font-size: 0.68rem;">
+                                <span>1 Day (Quick Shoot)</span>
+                                <span>Weekend (3 Days)</span>
+                                <span>1 Week</span>
+                                <span>1 Month</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="btnBackToStep1">
+                                <i class="bi bi-arrow-left me-1"></i> Back
+                            </button>
+                            <button type="button" class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow text-dark" id="btnRunAIMatch">
+                                <i class="bi bi-stars me-1 text-danger"></i> Find My Perfect Kit 🚀
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- LOADING STATE -->
+                    <div id="wizardLoading" class="wizard-pane d-none py-5 text-center">
+                        <div class="spinner-border text-primary mb-3" style="width: 3.5rem; height: 3.5rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">AI Match Engine Scanning...</h5>
+                        <p class="text-muted small mb-0">Analyzing 80+ gadgets in catalog against your selected performance profile...</p>
+                    </div>
+
+                    <!-- STEP 3: RESULT SHOWCASE -->
+                    <div id="wizardStep3" class="wizard-pane d-none">
+                        <!-- Match Score Banner -->
+                        <div class="d-flex align-items-center justify-content-between p-3 bg-white rounded-3 border shadow-xs mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold fs-5" id="resMatchScoreCircle" style="width: 50px; height: 50px;">
+                                    99%
+                                </div>
+                                <div>
+                                    <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1 small">AI RECOMMENDED CURATED KIT</span>
+                                    <h6 class="fw-bold text-dark mb-0 mt-1" id="resPurposeTitle">Curated Tech Kit</h6>
+                                </div>
+                            </div>
+                            <span class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill shadow-xs" id="resSavingsBadge">
+                                15% Combo Discount
+                            </span>
+                        </div>
+
+                        <!-- Match Reason -->
+                        <div class="p-2 px-3 rounded-3 bg-primary bg-opacity-10 border border-primary border-opacity-25 small text-primary mb-3 d-flex align-items-start gap-2">
+                            <i class="bi bi-robot fs-5"></i>
+                            <div id="resMatchReason" class="text-dark lh-sm pt-1">
+                                High-refresh display paired with dedicated GPU power for competitive gaming.
+                            </div>
+                        </div>
+
+                        <!-- Primary + Accessory Cards Grid -->
+                        <div class="row g-3 mb-3">
+                            <!-- Primary Gadget -->
+                            <div class="col-md-7">
+                                <div class="card border h-100 rounded-3 p-3 bg-white shadow-xs">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <span class="badge bg-primary rounded-pill small">PRIMARY GADGET</span>
+                                        <span class="text-muted small" id="resPrimaryCategory">Laptop</span>
+                                    </div>
+                                    <div class="d-flex gap-3 align-items-center mb-2">
+                                        <img id="resPrimaryImg" src="" alt="" class="rounded-3 border p-1" style="width: 80px; height: 80px; object-fit: contain;">
+                                        <div>
+                                            <h6 class="fw-bold text-dark mb-1" id="resPrimaryName">Gadget Name</h6>
+                                            <div class="text-muted small" id="resPrimarySpecs">Processor: Core i7</div>
+                                            <div class="mt-1">
+                                                <span class="fs-5 fw-extrabold text-dark" id="resPrimaryPrice">₹999</span>
+                                                <span class="text-muted small">/day</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Matched Accessory Bundle -->
+                            <div class="col-md-5">
+                                <div class="card border h-100 rounded-3 p-3 bg-white shadow-xs">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <span class="badge bg-secondary rounded-pill small">+ CURATED COMPANION</span>
+                                    </div>
+                                    <div class="d-flex gap-2 align-items-center mb-2">
+                                        <img id="resAccessoryImg" src="" alt="" class="rounded-3 border p-1" style="width: 65px; height: 65px; object-fit: contain;">
+                                        <div>
+                                            <div class="fw-bold text-dark small" id="resAccessoryName">Accessory Name</div>
+                                            <div class="text-muted small" id="resAccessoryCategory">Audio</div>
+                                            <div class="mt-1">
+                                                <span class="fw-bold text-primary" id="resAccessoryPrice">₹299</span>
+                                                <span class="text-muted small">/day</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kit Pricing Summary & Add to Cart Action -->
+                        <form action="{% url 'add_curated_kit' %}" method="POST" id="formAddCuratedKit">
+                            {% csrf_token %}
+                            <input type="hidden" name="primary_id" id="inputPrimaryId" value="">
+                            <input type="hidden" name="accessory_id" id="inputAccessoryId" value="">
+
+                            <div class="card border-0 rounded-3 p-3 bg-white shadow-sm mb-3">
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                    <div>
+                                        <div class="small text-muted">Combo Curated Daily Rental:</div>
+                                        <div class="d-flex align-items-baseline gap-2">
+                                            <span class="fs-3 fw-extrabold text-success" id="resDiscountedPrice">₹1,100</span>
+                                            <span class="text-muted small">/ Day</span>
+                                            <span class="text-muted text-decoration-line-through small" id="resRegularPrice">₹1,298</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex align-items-center gap-2">
+                                        <button type="button" class="btn btn-outline-secondary rounded-pill btn-sm px-3" id="btnRestartWizard">
+                                            <i class="bi bi-arrow-repeat me-1"></i> Try Another Match
+                                        </button>
+                                        <button type="submit" class="btn btn-warning fw-bold rounded-pill px-4 py-2 shadow-sm text-dark">
+                                            <i class="bi bi-bag-check-fill me-1"></i> Rent This Curated Kit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Toast Container for Wishlist & Location updates -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3 z-3">
+        <div id="fricaGlobalToast" class="toast align-items-center text-white bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2" id="fricaToastBody">
+                    <i class="bi bi-info-circle-fill fs-5 text-warning" id="fricaToastIcon"></i>
+                    <span id="fricaToastText">Notification message</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap 5.3 Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom Main JS -->
-    <script src="{% static 'js/main.js' %}"></script>
+
+    <!-- Global FRICA Helper Scripts (Delivery Location & AJAX Wishlist Toggle) -->
+    <script>
+        // Global Toast Notification Helper
+        function showFricaToast(text, type = 'info') {
+            const toastEl = document.getElementById('fricaGlobalToast');
+            const toastBodyText = document.getElementById('fricaToastText');
+            const toastIcon = document.getElementById('fricaToastIcon');
+            if (!toastEl || !toastBodyText) return;
+
+            toastBodyText.textContent = text;
+            if (type === 'success') {
+                toastIcon.className = 'bi bi-check-circle-fill fs-5 text-success';
+            } else if (type === 'danger') {
+                toastIcon.className = 'bi bi-exclamation-circle-fill fs-5 text-danger';
+            } else if (type === 'heart') {
+                toastIcon.className = 'bi bi-heart-fill fs-5 text-danger';
+            } else {
+                toastIcon.className = 'bi bi-info-circle-fill fs-5 text-warning';
+            }
+            const bsToast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3500 });
+            bsToast.show();
+        }
+
+        // Delivery Location Handler
+        const PINCODE_MAP = {
+            '688001': 'Alappuzha',
+            '688002': 'Alappuzha North',
+            '688003': 'Alappuzha South',
+            '682001': 'Kochi',
+            '682011': 'Ernakulam, Kochi',
+            '682016': 'Marine Drive, Kochi',
+            '682030': 'Kakkanad Tech Zone, Kochi',
+            '695001': 'Trivandrum',
+            '695011': 'Trivandrum City',
+            '695581': 'Technopark, Trivandrum',
+            '673001': 'Kozhikode',
+            '673004': 'Kozhikode Beach',
+            '691001': 'Kollam',
+            '686001': 'Kottayam',
+            '680001': 'Thrissur',
+            '670001': 'Kannur',
+            '560001': 'Bangalore Central',
+            '560100': 'Electronic City, Bangalore',
+            '560066': 'Whitefield, Bangalore',
+            '600001': 'Chennai Central',
+            '500001': 'Hyderabad',
+            '400001': 'Mumbai',
+            '110001': 'New Delhi',
+        };
+
+        function setDeliveryLocation(city, pincode) {
+            const locStr = pincode ? `${city} ${pincode}`.trim() : city;
+            localStorage.setItem('frica_delivery_location', locStr);
+            localStorage.setItem('frica_delivery_city', city);
+            localStorage.setItem('frica_delivery_pincode', pincode || '');
+            updateLocationUI(city, pincode);
+        }
+
+        function updateLocationUI(city, pincode) {
+            const displayStr = pincode ? `${city} ${pincode}` : city;
+            const navText = document.getElementById('navDeliveryLocation');
+            const mobileNavText = document.getElementById('mobileNavDeliveryLocation');
+            const modalText = document.getElementById('modalActiveLocationText');
+            if (navText) navText.textContent = displayStr;
+            if (mobileNavText) mobileNavText.textContent = displayStr;
+            if (modalText) modalText.textContent = pincode ? `${city}, ${pincode}` : city;
+        }
+
+        function initDeliveryLocation() {
+            const savedCity = localStorage.getItem('frica_delivery_city');
+            const savedPincode = localStorage.getItem('frica_delivery_pincode');
+            const savedLoc = localStorage.getItem('frica_delivery_location');
+            if (savedCity) {
+                updateLocationUI(savedCity, savedPincode || '');
+            } else if (savedLoc) {
+                updateLocationUI(savedLoc, '');
+            } else {
+                // Default to Kochi / 682001
+                setDeliveryLocation('Kochi', '682001');
+            }
+        }
+
+        function findNearestTechHub(lat, lon) {
+            const HUBS = [
+                { city: 'Alappuzha', pin: '688001', lat: 9.4981, lon: 76.3388 },
+                { city: 'Kochi', pin: '682001', lat: 9.9312, lon: 76.2673 },
+                { city: 'Trivandrum', pin: '695001', lat: 8.5241, lon: 76.9366 },
+                { city: 'Kollam', pin: '691001', lat: 8.8932, lon: 76.6141 },
+                { city: 'Kottayam', pin: '686001', lat: 9.5916, lon: 76.5222 },
+                { city: 'Kozhikode', pin: '673001', lat: 11.2588, lon: 75.7804 },
+                { city: 'Bangalore', pin: '560001', lat: 12.9716, lon: 77.5946 },
+                { city: 'Chennai', pin: '600001', lat: 13.0827, lon: 80.2707 },
+            ];
+            let nearest = HUBS[0];
+            let minDist = Infinity;
+            for (const h of HUBS) {
+                const d = Math.hypot(lat - h.lat, lon - h.lon);
+                if (d < minDist) {
+                    minDist = d;
+                    nearest = h;
+                }
+            }
+            return nearest;
+        }
+
+        window.applyPincode = function() {
+            const input = document.getElementById('inputPincode');
+            const feedback = document.getElementById('pincodeFeedback');
+            if (!input) return;
+            const pin = input.value.trim();
+            if (!/^\d{6}$/.test(pin)) {
+                if (feedback) {
+                    feedback.textContent = 'Please enter a valid 6-digit Indian pincode.';
+                    feedback.classList.remove('d-none');
+                }
+                input.focus();
+                return;
+            }
+            if (feedback) feedback.classList.add('d-none');
+            const city = PINCODE_MAP[pin] || 'Verified Kerala Hub';
+            setDeliveryLocation(city, pin);
+            showFricaToast(`Delivery location set to ${city} (${pin})`, 'success');
+            input.value = '';
+            const modalEl = document.getElementById('deliveryLocationModal');
+            if (modalEl) {
+                const bsModal = bootstrap.Modal.getInstance(modalEl);
+                if (bsModal) bsModal.hide();
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initDeliveryLocation();
+
+            // Quick City Pills click
+            document.querySelectorAll('.city-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const city = btn.dataset.city;
+                    const pincode = btn.dataset.pincode;
+                    setDeliveryLocation(city, pincode);
+                    showFricaToast(`Delivery location updated to ${city} (${pincode})`, 'success');
+                    const modalEl = document.getElementById('deliveryLocationModal');
+                    if (modalEl) {
+                        const bsModal = bootstrap.Modal.getInstance(modalEl);
+                        if (bsModal) bsModal.hide();
+                    }
+                });
+            });
+
+            // Geolocation Auto-Detect Button with Nominatim Reverse Geocoding
+            const autoBtn = document.getElementById('btnAutoDetectLocation');
+            if (autoBtn) {
+                autoBtn.addEventListener('click', () => {
+                    const spinner = document.getElementById('geoSpinner');
+                    const icon = document.getElementById('geoCrosshairIcon');
+                    const btnText = autoBtn.querySelector('.btn-text');
+
+                    if (spinner) spinner.classList.remove('d-none');
+                    if (icon) icon.classList.add('d-none');
+                    if (btnText) btnText.textContent = 'Detecting GPS coordinates...';
+                    autoBtn.disabled = true;
+
+                    if (!('geolocation' in navigator)) {
+                        if (spinner) spinner.classList.add('d-none');
+                        if (icon) icon.classList.remove('d-none');
+                        if (btnText) btnText.textContent = 'Use Current Location / Detect GPS';
+                        autoBtn.disabled = false;
+                        showFricaToast('Geolocation is not supported by your browser. Please choose your city manually.', 'warning');
+                        return;
+                    }
+
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const lat = position.coords.latitude;
+                            const lon = position.coords.longitude;
+                            if (btnText) btnText.textContent = 'Fetching address from GPS...';
+
+                            // Query OpenStreetMap Nominatim reverse geocoding API
+                            const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`;
+
+                            fetch(nominatimUrl, {
+                                headers: {
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Reverse geocoding network response failed');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                const addr = data.address || {};
+                                // Extract user's city, town, suburb, or district
+                                let detectedCity = addr.city || addr.town || addr.suburb || addr.municipality || addr.city_district || addr.district || addr.county || addr.state_district || addr.state || 'Detected Area';
+                                detectedCity = detectedCity.replace(/ District| Taluk| Municipality/gi, '').trim();
+
+                                // Extract user's pincode
+                                const detectedPin = addr.postcode || addr.postal_code || '';
+
+                                setDeliveryLocation(detectedCity, detectedPin);
+                                const displayBadge = detectedPin ? `${detectedCity} ${detectedPin}` : detectedCity;
+                                showFricaToast(`GPS Location Detected: ${displayBadge}`, 'success');
+
+                                const modalEl = document.getElementById('deliveryLocationModal');
+                                if (modalEl) {
+                                    const bsModal = bootstrap.Modal.getInstance(modalEl);
+                                    if (bsModal) bsModal.hide();
+                                }
+                            })
+                            .catch(err => {
+                                console.warn('Nominatim reverse lookup error, using proximity fallback:', err);
+                                const nearest = findNearestTechHub(lat, lon);
+                                setDeliveryLocation(nearest.city, nearest.pin);
+                                showFricaToast(`GPS Location: ${nearest.city} (${nearest.pin})`, 'success');
+
+                                const modalEl = document.getElementById('deliveryLocationModal');
+                                if (modalEl) {
+                                    const bsModal = bootstrap.Modal.getInstance(modalEl);
+                                    if (bsModal) bsModal.hide();
+                                }
+                            })
+                            .finally(() => {
+                                if (spinner) spinner.classList.add('d-none');
+                                if (icon) icon.classList.remove('d-none');
+                                if (btnText) btnText.textContent = 'Use Current Location / Detect GPS';
+                                autoBtn.disabled = false;
+                            });
+                        },
+                        (error) => {
+                            if (spinner) spinner.classList.add('d-none');
+                            if (icon) icon.classList.remove('d-none');
+                            if (btnText) btnText.textContent = 'Use Current Location / Detect GPS';
+                            autoBtn.disabled = false;
+
+                            if (error.code === error.PERMISSION_DENIED) {
+                                showFricaToast("Location access denied. Please choose your city or enter pincode manually.", "danger");
+                            } else if (error.code === error.POSITION_UNAVAILABLE) {
+                                showFricaToast("GPS location unavailable. Please choose your city or enter pincode manually.", "warning");
+                            } else if (error.code === error.TIMEOUT) {
+                                showFricaToast("GPS request timed out. Please choose your city or enter pincode manually.", "warning");
+                            } else {
+                                showFricaToast("Could not retrieve GPS location. Please choose your city or enter pincode manually.", "info");
+                            }
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 8000,
+                            maximumAge: 60000
+                        }
+                    );
+                });
+            }
+
+            // Global AJAX Wishlist Toggle Handler
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('.wishlist-toggle-btn');
+                if (!btn) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                const productId = btn.dataset.productId;
+                if (!productId) return;
+
+                const csrfToken = getCookie('csrftoken') || '{{ csrf_token }}';
+                btn.disabled = true;
+
+                fetch(`/wishlist/toggle/${productId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    }
+                })
+                .then(res => {
+                    if (res.status === 401) {
+                        return res.json().then(data => {
+                            showFricaToast(data.message || 'Please log in to save items to your wishlist.', 'danger');
+                            setTimeout(() => { window.location.href = data.login_url || '/login/'; }, 1000);
+                            throw new Error('Login required');
+                        });
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    btn.disabled = false;
+                    if (data.success) {
+                        // Toggle icon across all matching product buttons on page
+                        document.querySelectorAll(`.wishlist-toggle-btn[data-product-id="${productId}"]`).forEach(b => {
+                            const icon = b.querySelector('i');
+                            if (icon) {
+                                if (data.is_wishlisted) {
+                                    icon.className = 'bi bi-heart-fill text-danger fs-6';
+                                    b.setAttribute('title', 'Remove from Wishlist');
+                                } else {
+                                    icon.className = 'bi bi-heart text-secondary fs-6';
+                                    b.setAttribute('title', 'Add to Wishlist');
+                                }
+                            }
+                        });
+
+                        // Update navbar wishlist count badge
+                        const badge = document.getElementById('navWishlistBadge');
+                        if (badge) {
+                            badge.textContent = data.wishlist_count;
+                            if (data.wishlist_count > 0) {
+                                badge.classList.remove('d-none');
+                            } else {
+                                badge.classList.add('d-none');
+                            }
+                        }
+
+                        showFricaToast(data.message, data.is_wishlisted ? 'heart' : 'info');
+                    }
+                })
+                .catch(err => {
+                    btn.disabled = false;
+                });
+            });
+
+            // ================= AI SMART TECH MATCHER WIZARD HANDLER =================
+            let selectedPurpose = 'gaming';
+            let selectedBudget = 'mid';
+
+            // Purpose selection in Step 1
+            document.querySelectorAll('#wizardStep1 .wizard-option-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('#wizardStep1 .wizard-option-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    selectedPurpose = card.dataset.purpose || 'gaming';
+                });
+            });
+
+            // Budget selection in Step 2
+            document.querySelectorAll('#wizardStep2 .wizard-budget-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    document.querySelectorAll('#wizardStep2 .wizard-budget-chip').forEach(c => c.classList.remove('selected'));
+                    chip.classList.add('selected');
+                    selectedBudget = chip.dataset.budget || 'mid';
+                });
+            });
+
+            // Slider in Step 2
+            const daysSlider = document.getElementById('wizardDaysSlider');
+            const daysDisplay = document.getElementById('wizardDaysDisplay');
+            if (daysSlider && daysDisplay) {
+                daysSlider.addEventListener('input', () => {
+                    daysDisplay.textContent = `${daysSlider.value} Day${daysSlider.value > 1 ? 's' : ''}`;
+                });
+            }
+
+            // Step 1 -> Step 2
+            const btnNext = document.getElementById('btnNextToStep2');
+            if (btnNext) {
+                btnNext.addEventListener('click', () => {
+                    document.getElementById('wizardStep1').classList.add('d-none');
+                    document.getElementById('wizardStep2').classList.remove('d-none');
+
+                    const s1 = document.getElementById('stepIndicator1');
+                    const s2 = document.getElementById('stepIndicator2');
+                    if (s1) {
+                        s1.classList.remove('text-primary');
+                        s1.classList.add('text-success');
+                    }
+                    if (s2) {
+                        s2.classList.remove('text-muted');
+                        s2.classList.add('text-primary');
+                        const dot = s2.querySelector('span');
+                        if (dot) {
+                            dot.classList.replace('bg-secondary', 'bg-primary');
+                            dot.classList.remove('bg-opacity-25', 'text-muted');
+                            dot.classList.add('text-white');
+                        }
+                    }
+                });
+            }
+
+            // Step 2 -> Step 1
+            const btnBack = document.getElementById('btnBackToStep1');
+            if (btnBack) {
+                btnBack.addEventListener('click', () => {
+                    document.getElementById('wizardStep2').classList.add('d-none');
+                    document.getElementById('wizardStep1').classList.remove('d-none');
+
+                    const s1 = document.getElementById('stepIndicator1');
+                    const s2 = document.getElementById('stepIndicator2');
+                    if (s1) {
+                        s1.classList.add('text-primary');
+                        s1.classList.remove('text-success');
+                    }
+                    if (s2) {
+                        s2.classList.add('text-muted');
+                        s2.classList.remove('text-primary');
+                        const dot = s2.querySelector('span');
+                        if (dot) {
+                            dot.classList.replace('bg-primary', 'bg-secondary');
+                            dot.classList.add('bg-opacity-25', 'text-muted');
+                            dot.classList.remove('text-white');
+                        }
+                    }
+                });
+            }
+
+            // Run AI Match
+            const btnMatch = document.getElementById('btnRunAIMatch');
+            if (btnMatch) {
+                btnMatch.addEventListener('click', () => {
+                    document.getElementById('wizardStep2').classList.add('d-none');
+                    document.getElementById('wizardLoading').classList.remove('d-none');
+
+                    fetch(`/api/smart-match/?purpose=${encodeURIComponent(selectedPurpose)}&budget=${encodeURIComponent(selectedBudget)}`)
+                        .then(r => r.json())
+                        .then(data => {
+                            setTimeout(() => {
+                                document.getElementById('wizardLoading').classList.add('d-none');
+                                document.getElementById('wizardStep3').classList.remove('d-none');
+
+                                // Update indicators
+                                const s2 = document.getElementById('stepIndicator2');
+                                const s3 = document.getElementById('stepIndicator3');
+                                if (s2) s2.classList.replace('text-primary', 'text-success');
+                                if (s3) {
+                                    s3.classList.remove('text-muted');
+                                    s3.classList.add('text-primary');
+                                    const dot = s3.querySelector('span');
+                                    if (dot) {
+                                        dot.classList.replace('bg-secondary', 'bg-primary');
+                                        dot.classList.remove('bg-opacity-25', 'text-muted');
+                                        dot.classList.add('text-white');
+                                    }
+                                }
+
+                                // Populate Result
+                                if (data.success && data.primary_gadget) {
+                                    document.getElementById('resMatchScoreCircle').textContent = `${data.score}%`;
+                                    document.getElementById('resMatchReason').textContent = data.reason;
+
+                                    const p = data.primary_gadget;
+                                    document.getElementById('inputPrimaryId').value = p.id;
+                                    document.getElementById('resPrimaryName').textContent = p.name;
+                                    document.getElementById('resPrimaryCategory').textContent = `${p.brand} • ${p.category}`;
+                                    document.getElementById('resPrimaryPrice').textContent = `₹${Math.round(p.rent_price)}`;
+                                    document.getElementById('resPrimaryImg').src = p.image_url || 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=200&q=80';
+                                    document.getElementById('resPrimarySpecs').textContent = p.specs_preview.join(' | ') || 'Certified Elite Device';
+
+                                    if (data.accessory_gadget) {
+                                        const a = data.accessory_gadget;
+                                        document.getElementById('inputAccessoryId').value = a.id;
+                                        document.getElementById('resAccessoryName').textContent = a.name;
+                                        document.getElementById('resAccessoryCategory').textContent = `${a.brand} • ${a.category}`;
+                                        document.getElementById('resAccessoryPrice').textContent = `₹${Math.round(a.rent_price)}`;
+                                        document.getElementById('resAccessoryImg').src = a.image_url || 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=200&q=80';
+                                    } else {
+                                        document.getElementById('inputAccessoryId').value = '';
+                                    }
+
+                                    document.getElementById('resRegularPrice').textContent = `₹${Math.round(data.bundled_price)}`;
+                                    document.getElementById('resDiscountedPrice').textContent = `₹${Math.round(data.discounted_price)}`;
+                                }
+                            }, 450);
+                        })
+                        .catch(err => {
+                            document.getElementById('wizardLoading').classList.add('d-none');
+                            document.getElementById('wizardStep2').classList.remove('d-none');
+                            showFricaToast('Could not fetch recommendations. Please try again.', 'danger');
+                        });
+                });
+            }
+
+            // Restart Wizard
+            const btnRestart = document.getElementById('btnRestartWizard');
+            if (btnRestart) {
+                btnRestart.addEventListener('click', () => {
+                    document.getElementById('wizardStep3').classList.add('d-none');
+                    document.getElementById('wizardStep1').classList.remove('d-none');
+
+                    const s1 = document.getElementById('stepIndicator1');
+                    const s2 = document.getElementById('stepIndicator2');
+                    const s3 = document.getElementById('stepIndicator3');
+
+                    if (s1) {
+                        s1.classList.add('text-primary');
+                        s1.classList.remove('text-success');
+                    }
+                    if (s2) {
+                        s2.classList.add('text-muted');
+                        s2.classList.remove('text-primary', 'text-success');
+                        const dot = s2.querySelector('span');
+                        if (dot) {
+                            dot.className = 'rounded-circle bg-secondary bg-opacity-25 text-muted d-inline-flex align-items-center justify-content-center';
+                        }
+                    }
+                    if (s3) {
+                        s3.classList.add('text-muted');
+                        s3.classList.remove('text-primary', 'text-success');
+                        const dot = s3.querySelector('span');
+                        if (dot) {
+                            dot.className = 'rounded-circle bg-secondary bg-opacity-25 text-muted d-inline-flex align-items-center justify-content-center';
+                        }
+                    }
+                });
+            }
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

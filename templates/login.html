@@ -1,17 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Sign In - FRICA Rental App{% endblock %}
+{% block title %}Sign In - FRICA Rental Portal{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container py-5 my-2">
     <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-5">
+        <div class="col-12 col-md-8 col-lg-5 col-xl-4">
             <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5 bg-white">
                 <div class="text-center mb-4">
-                    <span class="brand-badge fs-6 mb-2 d-inline-block"><i class="bi bi-lightning-charge-fill"></i> FRICA</span>
-                    <h2 class="fw-bold text-dark mb-1">Welcome Back</h2>
-                    <p class="text-muted small">Access your gadget rental bookings and orders</p>
+                    <span class="brand-badge fs-6 mb-2 d-inline-block">
+                        <i class="bi bi-lightning-charge-fill"></i> FRICA
+                    </span>
+                    <h3 class="fw-bold text-dark mb-1">Unified Sign In</h3>
+                    <p class="text-muted small">Sign in to manage rentals, orders, or admin approvals</p>
                 </div>
 
                 <form method="POST" action="{% url 'usrlogin' %}">
@@ -21,7 +23,7 @@
                     {% endif %}
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold small text-muted">Username or Email</label>
+                        <label class="form-label fw-semibold small text-muted text-uppercase tracking-wider">Username or Email</label>
                         {{ form.username }}
                         {% if form.username.errors %}
                             <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
@@ -29,30 +31,33 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-semibold small text-muted">Password</label>
+                        <label class="form-label fw-semibold small text-muted text-uppercase tracking-wider">Password</label>
                         {{ form.password }}
                         {% if form.password.errors %}
                             <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
                         {% endif %}
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 fw-bold py-3 shadow-sm mb-3">
-                        Sign In <i class="bi bi-box-arrow-in-right ms-2"></i>
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 fw-bold py-2 shadow-sm mb-3">
+                        Sign In <i class="bi bi-box-arrow-in-right ms-1"></i>
                     </button>
                 </form>
 
                 <div class="text-center pt-3 border-top">
                     <p class="text-muted small mb-0">
-                        Don't have an account? <a href="{% url 'usrregister' %}" class="fw-bold text-primary text-decoration-none">Create Account</a>
+                        New Customer? <a href="{% url 'usrregister' %}" class="fw-bold text-primary text-decoration-none">Create an Account</a>
                     </p>
                 </div>
 
-                <!-- Demo Account Callout -->
-                <div class="mt-4 p-3 bg-light rounded-3 border small">
-                    <span class="fw-bold d-block text-dark mb-1"><i class="bi bi-info-circle text-primary me-1"></i> Quick Demo Credentials:</span>
-                    <div class="text-muted">Username: <code class="text-dark">demouser</code></div>
-                    <div class="text-muted">Password: <code class="text-dark">demo12345</code></div>
-                    <div class="text-muted mt-1">Admin: <code class="text-dark">admin</code> / <code class="text-dark">admin12345</code></div>
+                <!-- Info notice -->
+                <div class="mt-4 p-3 bg-light rounded-4 border small">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <i class="bi bi-shield-check text-success fs-5"></i>
+                        <span class="fw-bold text-dark">Smart Role Routing</span>
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Staff &amp; Admin accounts automatically route to the <strong>Staff Console</strong>. Customers route directly to their <strong>User Dashboard</strong>.
+                    </p>
                 </div>
             </div>
         </div>

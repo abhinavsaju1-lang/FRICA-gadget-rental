@@ -1,82 +1,105 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
+from django.db import models
 from django.utils import timezone
 from datetime import timedelta, date
 from decimal import Decimal
 
-from .models import Products, Customer, Cart, RentedItems
+from .models import Products, Customer, Cart, RentedItems, Wishlist
 from .forms import RegistrationForm, UserLoginForm, AddToCartForm, CheckoutForm, KYCUploadForm
 
 
 def home(request):
     """
-    Homepage displaying gadget catalog with category filter pills and dynamic search bar.
+    Flipkart/Amazon style homepage featuring dynamic promotional carousel,
+    sub-navbar category quick links, brand filtering, sorting, and gadget catalog.
     """
-    category_filter = request.GET.get('category', 'All')
+    category_filter = request.GET.get('category', 'All').strip()
+    brand_filter = request.GET.get('brand', '').strip()
     search_query = request.GET.get('q', '').strip()
+    sort_by = request.GET.get('sort', 'popular').strip()
 
     products = Products.objects.filter(availability=True)
 
     if category_filter and category_filter != 'All':
-        products = products.filter(category=category_filter)
+        products = products.filter(category__iexact=category_filter)
+
+    if brand_filter:
+        products = products.filter(
+            Q(brand__iexact=brand_filter) |
+            Q(brand__icontains=brand_filter) |
+            Q(product_name__icontains=brand_filter)
+        )
 
     if search_query:
         products = products.filter(
             Q(product_name__icontains=search_query) |
+            Q(brand__icontains=search_query) |
             Q(description__icontains=search_query) |
+            Q(specs__icontains=search_query) |
             Q(category__icontains=search_query)
         )
 
+    # Sorting
+    if sort_by == 'price_low':
+        products = products.order_by('rent_price')
+    elif sort_by == 'price_high':
+        products = products.order_by('-rent_price')
+    elif sort_by == 'rating':
+        products = products.order_by('-rating', '-reviews_count')
+    else:
+        products = products.order_by('-rating', '-created_at')
+
     categories = [
-        {'name': 'All',       'icon': 'bi-grid-fill'},
-        {'name': 'Mobiles',   'icon': 'bi-phone-fill'},
-        {'name': 'Laptop',    'icon': 'bi-laptop'},
-        {'name': 'Camera',    'icon': 'bi-camera-fill'},
-        {'name': 'TV',        'icon': 'bi-tv-fill'},
-        {'name': 'Watches',   'icon': 'bi-smartwatch'},
-        {'name': 'Computers', 'icon': 'bi-pc-display'},
+        {'name': 'All',       'slug': 'All',       'icon': 'bi-grid-fill',         'label': 'All Gadgets'},
+        {'name': 'Mobiles',   'slug': 'Mobiles',   'icon': 'bi-phone-fill',        'label': 'Mobiles'},
+        {'name': 'Laptop',    'slug': 'Laptop',    'icon': 'bi-laptop',            'label': 'Laptops'},
+        {'name': 'TV',        'slug': 'TV',        'icon': 'bi-tv-fill',           'label': 'Smart TVs'},
+        {'name': 'Camera',    'slug': 'Camera',    'icon': 'bi-camera-fill',       'label': 'Cameras'},
+        {'name': 'Audio',     'slug': 'Audio',     'icon': 'bi-speaker-fill',      'label': 'Audio & Theatres'},
+        {'name': 'Watches',   'slug': 'Watches',   'icon': 'bi-smartwatch',        'label': 'Watches'},
+        {'name': 'Computers', 'slug': 'Computers', 'icon': 'bi-pc-display',        'label': 'Gaming Rigs'},
     ]
+
+    top_brands = ['Apple', 'Samsung', 'Sony', 'Vivo', 'OnePlus', 'Canon', 'JBL', 'Dell', 'HP', 'Lenovo', 'Casio', 'Titan']
 
     features = [
         {
-            'icon': 'bi-wallet2',
-            'icon_bg': 'bg-primary bg-opacity-10',
-            'icon_color': 'text-primary',
-            'title': 'Affordable Daily Rates',
-            'sub': 'Pay only for the days you use',
+            'icon': 'bi-shield-check',
+            'title': 'Zero Security Deposit',
+            'sub': 'Verified KYC instant rental',
         },
         {
-            'icon': 'bi-shield-lock',
-            'icon_bg': 'bg-success bg-opacity-10',
-            'icon_color': 'text-success',
-            'title': 'Zero Security Deposit',
-            'sub': 'KYC-verified rentals, no cash lock-in',
+            'icon': 'bi-truck',
+            'title': 'Free Doorstep Delivery',
+            'sub': 'Fast dispatch to your doorstep',
         },
         {
             'icon': 'bi-arrow-repeat',
-            'icon_bg': 'bg-warning bg-opacity-10',
-            'icon_color': 'text-warning',
-            'title': 'Flexible Tenure',
-            'sub': 'Extend, shorten, or return anytime',
+            'title': 'Flexible Extensions',
+            'sub': 'Extend tenure dynamically',
         },
         {
-            'icon': 'bi-box-seam',
-            'icon_bg': 'bg-info bg-opacity-10',
-            'icon_color': 'text-info',
-            'title': 'Doorstep Delivery',
-            'sub': 'Hassle-free delivery & pickup',
+            'icon': 'bi-award',
+            'title': '100% Tested & Insured',
+            'sub': 'Covered under FRICA Care',
         },
     ]
 
     context = {
         'products': products,
         'current_category': category_filter,
+        'current_brand': brand_filter,
+        'current_sort': sort_by,
         'search_query': search_query,
         'categories': categories,
+        'top_brands': top_brands,
         'features': features,
         'total_count': products.count(),
     }
@@ -345,9 +368,12 @@ def cancel_rental(request, rental_id):
 def usrregister(request):
     """
     User registration view, creating both User and Customer profile records.
+    Automatically logs in the customer and redirects to the dashboard to complete KYC.
     """
     if request.user.is_authenticated:
-        return redirect('home')
+        if request.user.is_staff or request.user.is_superuser:
+            return redirect('admin_dashboard_view')
+        return redirect('user_dashboard')
 
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -365,8 +391,8 @@ def usrregister(request):
             )
 
             login(request, user)
-            messages.success(request, f"Welcome to FRICA, {user.first_name or user.username}! Your account has been created.")
-            return redirect('home')
+            messages.success(request, f"Welcome to FRICA, {user.first_name or user.username}! Your account has been created. Please complete your identity verification below.")
+            return redirect('user_dashboard')
     else:
         form = RegistrationForm()
 
@@ -375,10 +401,14 @@ def usrregister(request):
 
 def usrlogin(request):
     """
-    User authentication view supporting both username and email login.
+    Unified User & Staff authentication view supporting both username and email login.
+    - If staff / superuser: redirects directly to admin_dashboard_view.
+    - If standard customer: redirects to next_url, user_dashboard, or catalog.
     """
     if request.user.is_authenticated:
-        return redirect('home')
+        if request.user.is_staff or request.user.is_superuser:
+            return redirect('admin_dashboard_view')
+        return redirect('user_dashboard')
 
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
@@ -398,11 +428,15 @@ def usrlogin(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, f"Welcome back, {user.first_name or user.username}!")
-                next_url = request.GET.get('next') or request.POST.get('next')
-                if next_url:
-                    return redirect(next_url)
-                return redirect('home')
+                if user.is_staff or user.is_superuser:
+                    messages.success(request, f"Welcome to Staff Portal, {user.first_name or user.username}!")
+                    return redirect('admin_dashboard_view')
+                else:
+                    messages.success(request, f"Welcome back, {user.first_name or user.username}!")
+                    next_url = request.GET.get('next') or request.POST.get('next')
+                    if next_url:
+                        return redirect(next_url)
+                    return redirect('user_dashboard')
             else:
                 messages.error(request, "Invalid username/email or password. Please try again.")
     else:
@@ -413,11 +447,17 @@ def usrlogin(request):
 
 def usrlogout(request):
     """
-    Logs out user and redirects to home with confirmation.
+    Logs out user and redirects back to the login page with a success confirmation.
     """
     logout(request)
-    messages.info(request, "You have been logged out safely.")
-    return redirect('home')
+    messages.success(request, "You have been logged out successfully. Sign in again below.")
+    return redirect('usrlogin')
+
+
+# Convenient view aliases
+user_login_view = usrlogin
+user_logout_view = usrlogout
+
 
 @login_required(login_url='usrlogin')
 def kyc_verification(request):
@@ -503,29 +543,12 @@ def request_rental_return(request, rental_id):
 
 def category_view(request, category_name):
     """
-    Displays products filtered by category name.
+    Displays products filtered by category name with full brand and sorting support.
     """
-    categories = [
-        {'name': 'All',       'icon': 'bi-grid-fill'},
-        {'name': 'Mobiles',   'icon': 'bi-phone-fill'},
-        {'name': 'Computers', 'icon': 'bi-pc-display'},
-        {'name': 'Camera',    'icon': 'bi-camera-fill'},
-        {'name': 'Laptop',    'icon': 'bi-laptop'},
-        {'name': 'TV',        'icon': 'bi-tv-fill'},
-        {'name': 'Watches',   'icon': 'bi-smartwatch'},
-    ]
-
-    products = Products.objects.filter(availability=True)
-    if category_name and category_name.lower() != 'all':
-        products = products.filter(category__iexact=category_name)
-
-    context = {
-        'products': products,
-        'current_category': category_name,
-        'categories': categories,
-        'total_count': products.count(),
-    }
-    return render(request, 'home.html', context)
+    get_params = request.GET.copy()
+    get_params['category'] = category_name
+    request.GET = get_params
+    return home(request)
 
 
 @login_required(login_url='usrlogin')
@@ -573,6 +596,452 @@ def user_details(request):
         'user': request.user,
     }
     return render(request, 'user_details.html', context)
+
+
+# ==============================================================================
+# CUSTOM ADMIN & STAFF PORTAL VIEWS
+# ==============================================================================
+
+def admin_login_view(request):
+    """
+    Staff / Administrator login view.
+    Authenticates user and ensures `user.is_staff`.
+    """
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('admin_dashboard_view')
+
+    if request.method == 'POST':
+        login_id = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
+
+        username = login_id
+        if '@' in login_id:
+            try:
+                user_obj = User.objects.get(email__iexact=login_id)
+                username = user_obj.username
+            except User.DoesNotExist:
+                pass
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            if user.is_staff or user.is_superuser:
+                login(request, user)
+                messages.success(request, f"Welcome to the Staff Portal, {user.first_name or user.username}!")
+                return redirect('admin_dashboard_view')
+            else:
+                messages.error(request, "Access denied. Your account does not have staff administrator privileges.")
+                return redirect('admin_login_view')
+        else:
+            messages.error(request, "Invalid administrator credentials. Please try again.")
+            return redirect('admin_login_view')
+
+    return render(request, 'admin_login.html')
+
+
+@login_required(login_url='admin_login_view')
+def admin_dashboard_view(request):
+    """
+    FRICA Staff & Admin Management Dashboard:
+    - Stat Metrics: Total Bookings, Pending KYC, Waiting Approvals, Active Rentals.
+    - KYC Verification Requests: View details/images & Approve/Reject.
+    - Rental Orders: Approve (Active in-hand), Mark Returned, or Cancel.
+    """
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, "Staff administrator privileges required to access the management portal.")
+        return redirect('admin_login_view')
+
+    total_bookings = RentedItems.objects.count()
+    pending_kyc = Customer.objects.filter(kyc_status='PENDING').count()
+    waiting_approvals = RentedItems.objects.filter(rental_status='Waiting for Approval').count()
+    active_rentals = RentedItems.objects.filter(rental_status='Active').count()
+
+    kyc_list = Customer.objects.all().select_related('user').order_by(
+        models.Case(
+            models.When(kyc_status='PENDING', then=0),
+            models.When(kyc_status='VERIFIED', then=1),
+            models.When(kyc_status='REJECTED', then=2),
+            default=3,
+            output_field=models.IntegerField(),
+        ),
+        '-kyc_submitted_at'
+    )
+
+    orders = RentedItems.objects.all().select_related('user', 'product').order_by('-created_at')
+
+    context = {
+        'total_bookings': total_bookings,
+        'pending_kyc': pending_kyc,
+        'waiting_approvals': waiting_approvals,
+        'active_rentals': active_rentals,
+        'kyc_list': kyc_list,
+        'orders': orders,
+    }
+    return render(request, 'admin_dashboard.html', context)
+
+
+@login_required(login_url='admin_login_view')
+def admin_approve_kyc_view(request, customer_id):
+    """
+    One-click KYC approval / rejection action for staff.
+    """
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, "Staff administrator privileges required.")
+        return redirect('admin_login_view')
+
+    customer = get_object_or_404(Customer, id=customer_id)
+    action = request.GET.get('action') or request.POST.get('action', 'approve')
+
+    if action.lower() in ['approve', 'verified', 'verify']:
+        customer.kyc_status = 'VERIFIED'
+        customer.save()
+        messages.success(request, f"KYC verified successfully for customer: {customer.user.username}.")
+    else:
+        customer.kyc_status = 'REJECTED'
+        customer.save()
+        messages.warning(request, f"KYC marked as Rejected for customer: {customer.user.username}.")
+
+    return redirect('admin_dashboard_view')
+
+
+@login_required(login_url='admin_login_view')
+def admin_update_order_status_view(request, order_id, status):
+    """
+    Updates rental order lifecycle status:
+    - 'Active' / 'approve': Customer received the gadget.
+    - 'Returned': Gadget inspected and returned.
+    - 'Cancelled': Order cancelled.
+    """
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, "Staff administrator privileges required.")
+        return redirect('admin_login_view')
+
+    order = get_object_or_404(RentedItems, rental_id=order_id)
+    status_lower = status.lower()
+
+    if status_lower in ['active', 'approve', 'approved']:
+        order.rental_status = 'Active'
+        messages.success(request, f"Order #{order.rental_id} approved. Gadget is now Active in-hand with customer.")
+    elif status_lower in ['returned', 'return']:
+        order.rental_status = 'Returned'
+        order.return_status = 'RETURN_COMPLETED'
+        messages.success(request, f"Order #{order.rental_id} marked as Returned & Inspected.")
+    elif status_lower in ['cancelled', 'cancel']:
+        order.rental_status = 'Cancelled'
+        messages.info(request, f"Order #{order.rental_id} has been cancelled.")
+    else:
+        order.rental_status = status
+        messages.info(request, f"Order #{order.rental_id} status updated to {status}.")
+
+    order.save()
+    return redirect('admin_dashboard_view')
+
+
+# ==============================================================================
+# WISHLIST SYSTEM (AJAX Toggle, Dedicated Page, Move to Cart, Remove)
+# ==============================================================================
+
+def toggle_wishlist_view(request, pk):
+    """
+    AJAX endpoint to add or remove a gadget from user's wishlist without page refresh.
+    Returns JSON response with updated action, wishlist_count, and status.
+    """
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            'success': False,
+            'login_required': True,
+            'message': 'Please log in to add items to your wishlist.',
+            'login_url': reverse('usrlogin'),
+        }, status=401)
+
+    product = get_object_or_404(Products, pk=pk)
+    wishlist_entry = Wishlist.objects.filter(user=request.user, gadget=product).first()
+
+    if wishlist_entry:
+        wishlist_entry.delete()
+        action = 'removed'
+        is_wishlisted = False
+        message = f"Removed '{product.product_name}' from your wishlist."
+    else:
+        Wishlist.objects.create(user=request.user, gadget=product)
+        action = 'added'
+        is_wishlisted = True
+        message = f"Added '{product.product_name}' to your wishlist!"
+
+    wishlist_count = Wishlist.objects.filter(user=request.user).count()
+
+    return JsonResponse({
+        'success': True,
+        'action': action,
+        'is_wishlisted': is_wishlisted,
+        'wishlist_count': wishlist_count,
+        'product_id': pk,
+        'product_name': product.product_name,
+        'message': message,
+    })
+
+
+@login_required(login_url='usrlogin')
+def wishlist_page_view(request):
+    """
+    Renders dedicated Flipkart/Amazon style wishlist page with all saved gadgets.
+    """
+    wishlist_items = Wishlist.objects.filter(user=request.user).select_related('gadget').order_by('-created_at')
+    
+    return render(request, 'wishlist.html', {
+        'wishlist_items': wishlist_items,
+        'total_items': wishlist_items.count(),
+    })
+
+
+@login_required(login_url='usrlogin')
+def remove_from_wishlist(request, pk):
+    """
+    Standard view to remove item from wishlist (used in wishlist page buttons).
+    """
+    product = get_object_or_404(Products, pk=pk)
+    Wishlist.objects.filter(user=request.user, gadget=product).delete()
+    messages.info(request, f"'{product.product_name}' removed from your wishlist.")
+    return redirect('wishlist_page_view')
+
+
+@login_required(login_url='usrlogin')
+def move_to_cart_from_wishlist(request, pk):
+    """
+    One-click move from wishlist to shopping cart with default 2-day rental period,
+    then automatically redirects to the cart view.
+    """
+    product = get_object_or_404(Products, pk=pk)
+
+    if not product.availability:
+        messages.error(request, f"Sorry, {product.product_name} is currently out of stock.")
+        return redirect('wishlist_page_view')
+
+    today = timezone.localdate()
+    end_date = today + timedelta(days=2)
+
+    cart_item, created = Cart.objects.get_or_create(
+        user=request.user,
+        product=product,
+        defaults={
+            'rent_start_date': today,
+            'rent_end_date': end_date,
+            'total_days': 2,
+            'total_amount': product.rent_price * 2,
+        }
+    )
+
+    if not created:
+        cart_item.rent_start_date = today
+        cart_item.rent_end_date = end_date
+        cart_item.calculate_totals()
+        cart_item.save()
+
+    # Remove from wishlist once moved to cart
+    Wishlist.objects.filter(user=request.user, gadget=product).delete()
+
+    messages.success(request, f"'{product.product_name}' moved to your rental cart!")
+    return redirect('cart_view')
+
+
+# ==============================================================================
+# FEATURE 1: AI SMART TECH MATCHER API & CURATED KIT HANDLER
+# ==============================================================================
+
+def api_smart_match(request):
+    """
+    AI Smart Tech Matcher API endpoint.
+    Accepts:
+      - purpose: 'gaming', 'photography', 'coding', 'movie', 'travel'
+      - budget: 'low' (<500/day), 'mid' (500-1500/day), 'premium' (>1500/day)
+    Returns JSON with matching primary gadget, recommended accessory bundle, score, and explanation.
+    """
+    purpose = request.GET.get('purpose', 'gaming').strip().lower()
+    budget = request.GET.get('budget', 'mid').strip().lower()
+
+    qs = Products.objects.filter(availability=True)
+
+    # Budget filtering
+    if budget == 'low':
+        budget_qs = qs.filter(rent_price__lte=499)
+    elif budget == 'premium':
+        budget_qs = qs.filter(rent_price__gte=999)
+    else:  # mid
+        budget_qs = qs.filter(rent_price__gte=400, rent_price__lte=1500)
+
+    if not budget_qs.exists():
+        budget_qs = qs
+
+    score = 98
+    reason = ""
+
+    if purpose == 'gaming':
+        primary_gadget = budget_qs.filter(
+            Q(category__in=['Laptop', 'Computers']) &
+            (Q(product_name__icontains='gaming') | Q(product_name__icontains='tuf') | Q(product_name__icontains='victus') | Q(product_name__icontains='legion') | Q(product_name__icontains='rtx') | Q(specs__icontains='rtx') | Q(category='Laptop'))
+        ).first() or qs.filter(category='Laptop').first()
+        accessory_gadget = qs.filter(category='Audio').first()
+        score = 99
+        reason = "Equipped with high-refresh display and dedicated ray-tracing GPU for ultra-smooth competitive gaming and esports performance."
+
+    elif purpose == 'photography':
+        primary_gadget = budget_qs.filter(category='Camera').first() or qs.filter(category='Camera').first()
+        accessory_gadget = qs.filter(category='Mobiles').order_by('-rent_price').first()
+        score = 97
+        reason = "Equipped with cinema-grade sensor dynamic range, optical stabilization, and 4K/8K RAW recording capabilities."
+
+    elif purpose == 'coding':
+        primary_gadget = budget_qs.filter(
+            Q(category='Laptop') & (Q(product_name__icontains='macbook') | Q(product_name__icontains='apple') | Q(product_name__icontains='hp') | Q(product_name__icontains='pro'))
+        ).first() or qs.filter(category='Laptop').first()
+        accessory_gadget = qs.filter(category='Audio').first()
+        score = 98
+        reason = "Blazing multi-core compilation throughput, extensive RAM, and crisp Retina/OLED display tailored for developers."
+
+    elif purpose == 'movie':
+        primary_gadget = budget_qs.filter(category='TV').first() or qs.filter(category='TV').first()
+        accessory_gadget = qs.filter(category='Audio').first()
+        score = 96
+        reason = "Infinite OLED contrast, cinema Dolby Vision HDR, and immersive room-filling spatial surround sound."
+
+    else:  # travel & roadtrip
+        primary_gadget = budget_qs.filter(
+            Q(category__in=['Mobiles', 'Camera', 'Watches'])
+        ).order_by('-rent_price').first() or qs.filter(category='Mobiles').first()
+        accessory_gadget = qs.filter(category='Watches').first()
+        score = 95
+        reason = "Weather-sealed compact body, flagship camera zoom lenses, and long battery endurance for vacations and content capture."
+
+    if not primary_gadget:
+        primary_gadget = qs.first()
+
+    def serialize_gadget(g):
+        if not g:
+            return None
+        return {
+            'id': g.id,
+            'name': g.product_name,
+            'brand': g.brand or g.category,
+            'category': g.category,
+            'rent_price': float(g.rent_price),
+            'market_value': g.estimated_market_value,
+            'rating': float(g.rating or 4.8),
+            'reviews_count': g.reviews_count or 48,
+            'image_url': g.get_image_url or (g.image.url if g.image else ''),
+            'specs_preview': [f"{s['key']}: {s['value']}" for s in g.specs_preview],
+        }
+
+    p_data = serialize_gadget(primary_gadget)
+    a_data = serialize_gadget(accessory_gadget)
+
+    bundled_price = float(primary_gadget.rent_price) if primary_gadget else 0
+    if accessory_gadget:
+        bundled_price += float(accessory_gadget.rent_price)
+
+    discounted_price = round(bundled_price * 0.85, 0)
+
+    return JsonResponse({
+        'success': True,
+        'purpose': purpose,
+        'budget': budget,
+        'score': score,
+        'reason': reason,
+        'primary_gadget': p_data,
+        'accessory_gadget': a_data,
+        'bundled_price': bundled_price,
+        'discounted_price': discounted_price,
+        'savings_percent': 15,
+    })
+
+
+@login_required(login_url='usrlogin')
+def add_curated_kit(request):
+    """
+    One-click action to add primary gadget and accessory bundle to cart,
+    reserving them for a standard 2-day period with celebratory redirect to cart.
+    """
+    primary_id = request.POST.get('primary_id') or request.GET.get('primary_id')
+    accessory_id = request.POST.get('accessory_id') or request.GET.get('accessory_id')
+
+    if not primary_id:
+        messages.error(request, "No gadget selected.")
+        return redirect('home')
+
+    today = timezone.localdate()
+    end_date = today + timedelta(days=2)
+
+    added_names = []
+    for pid in [primary_id, accessory_id]:
+        if pid:
+            try:
+                prod = Products.objects.get(pk=pid, availability=True)
+                cart_item, created = Cart.objects.get_or_create(
+                    user=request.user,
+                    product=prod,
+                    defaults={
+                        'rent_start_date': today,
+                        'rent_end_date': end_date,
+                        'total_days': 2,
+                        'total_amount': prod.rent_price * 2,
+                    }
+                )
+                if not created:
+                    cart_item.rent_start_date = today
+                    cart_item.rent_end_date = end_date
+                    cart_item.calculate_totals()
+                    cart_item.save()
+                added_names.append(prod.product_name)
+            except (Products.DoesNotExist, ValueError):
+                pass
+
+    if added_names:
+        messages.success(request, f"✨ AI Curated Kit added to your rental cart: {' + '.join(added_names)}!")
+    else:
+        messages.error(request, "Selected kit items are currently unavailable.")
+
+    return redirect('cart_view')
+
+
+# ==============================================================================
+# FEATURE 2: SMART RENT-TO-OWN (TRY BEFORE YOU BUY) CALCULATOR
+# ==============================================================================
+
+def apply_buyout_inquiry(request, pk):
+    """
+    Simulates or registers a Rent-to-Own Buyout calculation.
+    Calculates 70% equity credit applied toward full purchase price.
+    """
+    product = get_object_or_404(Products, pk=pk)
+    try:
+        days = int(request.GET.get('days') or request.POST.get('days') or 30)
+    except (ValueError, TypeError):
+        days = 30
+
+    market_val = product.estimated_market_value
+    rent_paid = float(product.rent_price) * days
+    equity_credit = round(rent_paid * 0.70, 2)
+    buyout_price = max(0, round(market_val - equity_credit, 2))
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('format') == 'json':
+        return JsonResponse({
+            'success': True,
+            'product_id': product.id,
+            'product_name': product.product_name,
+            'market_value': market_val,
+            'days': days,
+            'rent_paid': rent_paid,
+            'equity_credit': equity_credit,
+            'buyout_price': buyout_price,
+            'savings': round(rent_paid * 0.30, 2),
+        })
+
+    messages.success(
+        request,
+        f"💡 Rent-to-Own Simulation for '{product.product_name}': After {days} days of rental, you get ₹{equity_credit:,.0f} credited! You can own it for just ₹{buyout_price:,.0f}."
+    )
+    return redirect('product_detail', pk=pk)
+
+
+
 
 
 

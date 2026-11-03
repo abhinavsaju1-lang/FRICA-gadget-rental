@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}FRICA Staff Portal - Admin Sign In{% endblock %}
+
+{% block content %}
+<div class="container py-5 my-3">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5 col-xl-4">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <!-- Navy Accent Header -->
+                <div class="p-4 text-center text-white" style="background: linear-gradient(135deg, #0b1e36 0%, #152e4d 100%);">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-10 p-3 mb-3 border border-white border-opacity-25 shadow-sm">
+                        <i class="bi bi-shield-lock-fill text-warning fs-2"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1 tracking-tight">FRICA Staff Portal</h4>
+                    <p class="text-white-50 small mb-0">Administrative &amp; KYC Verification Access</p>
+                </div>
+
+                <!-- Login Form Body -->
+                <div class="card-body p-4 p-md-4 bg-white">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags|default:'danger' }} py-2 px-3 small rounded-3 mb-3 d-flex align-items-center gap-2" role="alert">
+                                <i class="bi bi-exclamation-circle-fill"></i>
+                                <div>{{ message }}</div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" action="{% url 'admin_login_view' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted text-uppercase tracking-wider">Staff Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-person-badge"></i>
+                                </span>
+                                <input type="text" name="username" class="form-control bg-light border-start-0" placeholder="admin / staff_id" required autofocus>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-muted text-uppercase tracking-wider">Secret Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-key-fill"></i>
+                                </span>
+                                <input type="password" name="password" class="form-control bg-light border-start-0" placeholder="••••••••" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100 rounded-pill py-2 fw-semibold shadow-sm text-uppercase tracking-wider" style="background: #0b1e36;">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Staff Console
+                        </button>
+                    </form>
+
+                    <div class="mt-4 pt-3 border-top text-center">
+                        <a href="{% url 'home' %}" class="text-decoration-none small text-muted">
+                            <i class="bi bi-arrow-left me-1"></i> Return to Customer Catalog
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light py-2 text-center text-muted small border-0">
+                    <i class="bi bi-lock-fill me-1"></i> Authorized Personnel Only &bull; 256-Bit TLS
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
